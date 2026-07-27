@@ -31,9 +31,6 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Install frontend dependencies
-        run: npm ci
-
       - name: Setup Application
         run: composer setup
 
