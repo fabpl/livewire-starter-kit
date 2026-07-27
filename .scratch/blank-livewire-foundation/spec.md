@@ -168,3 +168,17 @@ rather than accepted from the scaffold.
 Marked `resolved` rather than one of the five triage roles, which describe what remains
 to be done and have no terminal state. `resolved` is the word this repository's tracker
 configuration already uses for completed work in its wayfinding section.
+
+---
+
+**Superseded in part, 2026-07-27.** The `Additions. None. The foundation is the kit,
+unmodified.` clause no longer holds, and neither do user stories 18, 19 and 24. Rector, a
+coverage threshold, a higher static-analysis level and Pest were each declined here and
+are each reversed by `.scratch/enforced-quality-gate/spec.md`, with the reasoning recorded
+in `docs/adr/0001-enforced-quality-gate-over-upstream-fidelity.md` and
+`docs/adr/0002-pest-replaces-phpunit.md`.
+
+The status stays `resolved`: this effort did finish, and its tickets did meet their
+criteria. What changed is a decision it took, not whether it was completed. The one
+principle of this spec that survives intact is its testing seam — a single aggregate
+command, identical locally and in CI.
