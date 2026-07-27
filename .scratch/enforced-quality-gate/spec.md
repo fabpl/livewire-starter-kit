@@ -66,7 +66,7 @@ because the gate needs capabilities the previous one does not have.
 17. As a developer, I want every line of application code executed by a test, so that untested code cannot be committed.
 18. As a developer, I want business logic kept out of route declarations, so that the measured perimeter cannot be sidestepped.
 19. As a developer, I want a way to check whether my tests actually detect changes, so that a coverage percentage does not become a number I trust blindly.
-20. As a developer, I want my templates, styles, scripts, workflow files and documentation formatted mechanically, so that the frontend is held to the same standard as the backend.
+20. As a developer, I want my templates, styles, scripts and workflow files formatted mechanically, so that the frontend is held to the same standard as the backend.
 21. As a developer, I want utility classes sorted automatically in my templates, so that class order is never a matter of opinion.
 22. As a developer, I want the formatter for templates and the formatter for PHP to have an enforced boundary, so that they cannot fight over the same file.
 23. As a maintainer, I want each tool to own its concern alone, so that the chain converges instead of oscillating.
@@ -116,7 +116,7 @@ to diagnose.
 | Comment and docblock hygiene | Pint | — |
 | Class finality | Rector | Pest architecture tests |
 | Dead code and type declarations | Rector | Larastan |
-| Templates, styles, scripts, workflows, documentation | Prettier | — |
+| Templates, styles, scripts, workflows | Prettier | — |
 | Dependency manifests and lockfiles | Composer, npm | — |
 
 Class finality belongs to Rector and explicitly not to Pint. The reason is
@@ -280,15 +280,26 @@ rewrites single-quoted calls inside templates to double quotes, disagreeing with
 Indentation must be set explicitly, since the plugin's default contradicts the
 editor configuration.
 
-Prettier owns templates, styles, scripts, workflow files and documentation. It
+Prettier owns templates, styles, scripts and workflow files. It
 does not own dependency manifests or lockfiles: those already have owners that rewrite them on
 every install. The measured disagreement there is a single missing final newline — trivial in
 itself, and exactly the kind of recurring unrelated failure that gets an entire gate switched
 off after three months.
 
-Documentation is included deliberately. The issue tracker holds agent-authored tickets, which
-is the surface this effort exists to discipline, and the treatment was measured harmless: prose
-is not reflowed, only tables aligned and emphasis markers normalised.
+Documentation was included and then excluded, and the reversal is recorded rather than quietly
+applied. The original reasoning was that the issue tracker holds agent-authored tickets, which
+is the surface this effort exists to discipline, and that the treatment was measured harmless:
+prose is not reflowed, only tables aligned and emphasis markers normalised. The maintainer
+reversed it during implementation. Those two edits are harmless to a machine but not free to a
+human — realigning a table and rewriting `*maximum*` as `_maximum_` is churn on the one surface
+where nobody was arguing about formatting — and prose is where the argument for a mechanical
+formatter is weakest, because there is no reviewer time being lost to it. Markdown is therefore
+excluded, and the reasoning sits in the ignore file next to the rule.
+
+This is worth noting as evidence about the escalation route rather than as a footnote about
+markdown. The spec claims that disagreement with a rule is resolved by a human changing the
+configuration deliberately, never by routing around it. That is what happened here, on the
+first rule anyone disagreed with.
 
 The ignore file is structural rather than incidental. Prettier's PHP plugin registers itself on the
 PHP extension and was measured claiming an ordinary source file in a probe — two fixers on one
@@ -444,10 +455,12 @@ the two files it was tried on — neither candidate is a first-party project, an
 tool has a deserved reputation for breaking on unusual directives. And the size of the coverage
 step, the only one that is writing work rather than configuration.
 
-Two decisions reversed themselves while this was being worked out, and both corrections are
-recorded in place rather than quietly applied. The route-closure rule was first specified as an
-architecture assertion and is infeasible as such. Mutation testing was first accepted into the
-blocking gate and then removed from it.
+Three decisions reversed themselves, and all three corrections are recorded in place rather than
+quietly applied. The route-closure rule was first specified as an architecture assertion and is
+infeasible as such. Mutation testing was first accepted into the blocking gate and then removed
+from it. Documentation was first inside Prettier's perimeter and was taken out of it during
+implementation — the only one of the three reversed by the maintainer rather than by this
+document, and so the first live test of the escalation route.
 
 The rule most likely to be regretted is named in advance, with its fallback written down, so
 that reaching for it later is a decision rather than an improvisation.
