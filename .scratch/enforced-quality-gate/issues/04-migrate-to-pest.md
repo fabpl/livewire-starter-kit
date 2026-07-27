@@ -19,14 +19,27 @@ is still read and the previous runner remains as a transitive dependency.
 
 **Blocked by:** 01
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] Pest and its Laravel plugin are development dependencies
-- [ ] The suites are bound to the application test case, so feature tests still boot the application
-- [ ] Both example tests are rewritten in functional style
-- [ ] The inert database-refresh trait is gone rather than ported
-- [ ] No test class remains apart from the base case the suites bind to
-- [ ] The aggregate command invokes Pest
-- [ ] The root-route test still proves the application boots, routes and renders
-- [ ] `composer test` passes
-- [ ] Committed as a single commit following the repository's Conventional Commits convention
+- [x] Pest and its Laravel plugin are development dependencies
+- [x] The suites are bound to the application test case, so feature tests still boot the application
+- [x] Both example tests are rewritten in functional style
+- [x] The inert database-refresh trait is gone rather than ported
+- [x] No test class remains apart from the base case the suites bind to
+- [x] The aggregate command invokes Pest
+- [x] The root-route test still proves the application boots, routes and renders
+- [x] `composer test` passes
+- [x] Committed as a single commit following the repository's Conventional Commits convention
+
+## Comments
+
+`phpunit/phpunit` was removed from the direct development dependencies rather than left
+alongside Pest, so that ADR-0002's "remains as a transitive dependency" is true of the
+manifest and not only of the installed tree. Pest requires it, so it is still installed and
+`phpunit.xml` is still the configuration that is read.
+
+The version resolution is tighter than it looks. `laravel/pao` conflicts with Pest below
+4.6.3, and Pest 4.7.5 conflicts with PHPUnit above 12.5.30, so the three packages meet at a
+single point: Pest 4.7.5 with PHPUnit 12.5.30, which is a downgrade from the 12.5.32 the
+lockfile held. `pestphp/pest-plugin-laravel` had to be taken at ^4.1 — 4.0 does not accept
+Laravel 13.
