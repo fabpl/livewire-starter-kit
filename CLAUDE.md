@@ -13,3 +13,7 @@ The five canonical roles, each label string equal to its name. See `docs/agents/
 ### Domain docs
 
 Single-context — `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+
+### Commits
+
+Every commit message follows Conventional Commits v1.0.0. See `.claude/skills/conventional-commits/SKILL.md`.
