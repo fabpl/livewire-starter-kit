@@ -1,11 +1,13 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/blank-livewire-starter-kit",
+    "name": "fabpl/livewire-starter-kit",
     "type": "project",
-    "description": "The official Laravel starter kit for Livewire.",
+    "description": "A Livewire application foundation for agent-written code, held to a mechanically enforced quality gate.",
     "keywords": [
         "laravel",
-        "framework"
+        "livewire",
+        "starter-kit",
+        "quality-gate"
     ],
     "license": "MIT",
     "require": {
