@@ -15,11 +15,11 @@ Expanding the rules first keeps each step independently committable.
 
 **Status:** ready-for-agent
 
-- [ ] Dependency directories for PHP and for Node are ignored
-- [ ] Compiled asset output and the development-server marker files are ignored
-- [ ] Local environment files are ignored, while the committed example environment file is not
-- [ ] The local database file is ignored
-- [ ] Framework-generated storage artefacts are ignored
-- [ ] The existing macOS and JetBrains rules survive unchanged
-- [ ] Each rule is verified with git's own ignore-check rather than by reading the file
-- [ ] Committed as a single commit following the repository's Conventional Commits convention
+- [x] Dependency directories for PHP and for Node are ignored
+- [x] Compiled asset output and the development-server marker files are ignored
+- [x] Local environment files are ignored, while the committed example environment file is not
+- [x] The local database file is ignored
+- [x] Framework-generated storage artefacts are ignored
+- [x] The existing macOS and JetBrains rules survive unchanged
+- [x] Each rule is verified with git's own ignore-check rather than by reading the file
+- [x] Committed as a single commit following the repository's Conventional Commits convention
