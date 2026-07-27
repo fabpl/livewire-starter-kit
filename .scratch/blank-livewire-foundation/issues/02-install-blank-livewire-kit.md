@@ -16,15 +16,15 @@ settled it.
 
 **Status:** ready-for-agent
 
-- [ ] The blank Livewire starter kit is installed at the versions recorded in the spec
-- [ ] PHPUnit is the test runner and no Pest package is present
-- [ ] The database is SQLite and requires no external service to run or test
-- [ ] The kit's aggregate quality command completes green, unchanged from what it ships
-- [ ] The root route responds successfully and renders the welcome view
-- [ ] The asset build completes successfully
-- [ ] The application key and the local database file exist after installation
-- [ ] Commit history, agent skills, agent instruction file and agent documentation are unchanged
-- [ ] No dependency directory or build output appears as untracked in the working tree
-- [ ] Nothing is added beyond the kit — no extra package, tool or configuration
-- [ ] No authentication scaffolding and no UI component library are present
-- [ ] Committed as a single commit following the repository's Conventional Commits convention
+- [x] The blank Livewire starter kit is installed at the versions recorded in the spec
+- [x] PHPUnit is the test runner and no Pest package is present
+- [x] The database is SQLite and requires no external service to run or test
+- [x] The kit's aggregate quality command completes green, unchanged from what it ships
+- [x] The root route responds successfully and renders the welcome view
+- [x] The asset build completes successfully
+- [x] The application key and the local database file exist after installation
+- [x] Commit history, agent skills, agent instruction file and agent documentation are unchanged
+- [x] No dependency directory or build output appears as untracked in the working tree
+- [x] Nothing is added beyond the kit — no extra package, tool or configuration
+- [x] No authentication scaffolding and no UI component library are present
+- [x] Committed as a single commit following the repository's Conventional Commits convention
