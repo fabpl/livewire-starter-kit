@@ -64,6 +64,10 @@
         "format:check": [
             "npm run format:check"
         ],
+        "fix": [
+            "@lint",
+            "@format"
+        ],
         "ci:check": [
             "Composer\\Config::disableProcessTimeout",
             "@test"
