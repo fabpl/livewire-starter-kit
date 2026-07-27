@@ -13,13 +13,13 @@ afterwards would mean rewriting the tree a second time.
 
 **Blocked by:** None — can start immediately.
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] The dependency manifest requires PHP 8.5 or later
-- [ ] The pipeline installs PHP 8.5
-- [ ] Larastan is told to analyse against 8.5, so it rejects locally what the pipeline would reject
-- [ ] The lockfile is regenerated and committed
-- [ ] The framework and every development dependency still resolve at that floor
-- [ ] Syntax newer than the declared floor is demonstrably rejected by static analysis
-- [ ] `composer test` passes
-- [ ] Committed as a single commit following the repository's Conventional Commits convention
+- [x] The dependency manifest requires PHP 8.5 or later
+- [x] The pipeline installs PHP 8.5
+- [x] Larastan is told to analyse against 8.5, so it rejects locally what the pipeline would reject
+- [x] The lockfile is regenerated and committed
+- [x] The framework and every development dependency still resolve at that floor
+- [x] Syntax newer than the declared floor is demonstrably rejected by static analysis
+- [x] `composer test` passes
+- [x] Committed as a single commit following the repository's Conventional Commits convention
