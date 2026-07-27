@@ -14,13 +14,13 @@ available — precisely the moment a stuck agent would find it.
 
 **Blocked by:** None — can start immediately.
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] A check fails when a coverage-ignore or mutation-ignore annotation appears anywhere in the tree
-- [ ] The check is its own command, runnable on its own as well as from the aggregate command
-- [ ] The aggregate command runs it, so the pipeline inherits it without a workflow change
-- [ ] Adding one of the annotations is demonstrated to fail the gate, and removing it to restore green
-- [ ] The check reports which file and line offends, rather than failing silently
-- [ ] Vendored and generated directories are outside its reach, so a dependency cannot fail the build
-- [ ] `composer test` passes
-- [ ] Committed as a single commit following the repository's Conventional Commits convention
+- [x] A check fails when a coverage-ignore or mutation-ignore annotation appears anywhere in the tree
+- [x] The check is its own command, runnable on its own as well as from the aggregate command
+- [x] The aggregate command runs it, so the pipeline inherits it without a workflow change
+- [x] Adding one of the annotations is demonstrated to fail the gate, and removing it to restore green
+- [x] The check reports which file and line offends, rather than failing silently
+- [x] Vendored and generated directories are outside its reach, so a dependency cannot fail the build
+- [x] `composer test` passes
+- [x] Committed as a single commit following the repository's Conventional Commits convention
