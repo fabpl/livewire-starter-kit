@@ -57,6 +57,12 @@
         "lint:check": [
             "pint --parallel --test"
         ],
+        "format": [
+            "npm run format"
+        ],
+        "format:check": [
+            "npm run format:check"
+        ],
         "ci:check": [
             "Composer\\Config::disableProcessTimeout",
             "@test"
@@ -70,6 +76,7 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@lint:check",
+            "@format:check",
             "@types:check",
             "@annotations:check",
             "@php artisan test"

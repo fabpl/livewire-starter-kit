@@ -1,0 +1,23 @@
+{
+    "$schema": "https://json.schemastore.org/prettierrc.json",
+    "plugins": ["@prettier/plugin-php", "prettier-plugin-blade", "prettier-plugin-tailwindcss"],
+    "tailwindStylesheet": "./resources/css/app.css",
+    "singleQuote": true,
+    "tabWidth": 4,
+    "printWidth": 150,
+    "bladeDirectiveArgSpacing": "none",
+    "overrides": [
+        {
+            "files": ["*.yml", "*.yaml"],
+            "options": {
+                "tabWidth": 2
+            }
+        },
+        {
+            "files": ["{compose,docker-compose}.{yml,yaml}"],
+            "options": {
+                "tabWidth": 4
+            }
+        }
+    ]
+}

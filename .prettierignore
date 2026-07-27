@@ -1,0 +1,26 @@
+# Machine-owned trees. Their contents have an owner that is not this repository.
+/vendor
+/node_modules
+/public/build
+/storage
+
+# Dependency manifests and lockfiles belong to Composer and npm, which rewrite them on
+# every install. Formatting them here would turn the pipeline red on an unrelated change.
+/composer.json
+/composer.lock
+/package.json
+/package-lock.json
+
+# Markdown is excluded by a deliberate decision of the maintainer, reversing the position
+# the spec took. Prose is authored here — specs, tickets, decision records — and the table
+# realignment and emphasis-marker rewriting Prettier applies to it were judged not worth the
+# churn on files a human reads rather than a machine.
+*.md
+
+# Plain PHP belongs to Pint. Prettier's PHP plugin registers itself on the PHP extension,
+# and letting it act would put two fixers on one concern. Templates are re-included: they
+# are the surface Prettier does own. `artisan` carries no extension and is inferred as PHP
+# from its shebang, so it needs naming explicitly.
+*.php
+!*.blade.php
+/artisan
