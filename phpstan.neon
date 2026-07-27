@@ -14,3 +14,9 @@ parameters:
     level: 7
 
     phpVersion: 80500
+
+    # Without this the analyser caches under the system temporary directory, where every
+    # checkout and every worktree on the machine shares one cache keyed by nothing that
+    # tells them apart. Deleting a worktree then breaks the analyser in the ones that
+    # remain. The path is relative to this file, so each checkout gets its own.
+    tmpDir: .phpstan.cache

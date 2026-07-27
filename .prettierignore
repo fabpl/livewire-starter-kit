@@ -3,6 +3,7 @@
 /node_modules
 /public/build
 /storage
+/.phpstan.cache
 
 # Dependency manifests and lockfiles belong to Composer and npm, which rewrite them on
 # every install. Formatting them here would turn the pipeline red on an unrelated change.
