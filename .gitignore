@@ -1,40 +1,47 @@
-# --- laravel/blank-livewire-starter-kit (upstream, keep byte-identical) ---
-/.phpunit.cache
+# Dependencies
 /node_modules
+/vendor
+
+# Build output
 /public/build
 /public/fonts-manifest.dev.json
 /public/hot
 /public/storage
-/storage/*.key
-/storage/pail
-/vendor
+
+# Environment
 .env
 .env.backup
 .env.production
-.phpactor.json
+
+# Database
+/database/*.sqlite*
+
+# Framework runtime and caches
+/.phpunit.cache
 .phpunit.result.cache
-Homestead.json
-Homestead.yaml
+/storage/*.key
+/storage/pail
+
+# Logs
 npm-debug.log
 yarn-error.log
+
+# Local tooling config
 /auth.json
+.phpactor.json
+Homestead.json
+Homestead.yaml
+
+# Editors and IDEs
 /.fleet
 /.idea
 /.nova
 /.vscode
 /.zed
-
-# --- local additions ---
-
-# Local database. The kit also ships database/.gitignore with the same effect, but
-# that file only arrives with the kit — this rule covers the gap before then.
-/database/*.sqlite*
+*.iml
+*.ipr
+*.iws
 
 # macOS
 .DS_Store
 ._*
-
-# JetBrains IDEs (PhpStorm). The directory itself is already covered upstream.
-*.iml
-*.ipr
-*.iws
