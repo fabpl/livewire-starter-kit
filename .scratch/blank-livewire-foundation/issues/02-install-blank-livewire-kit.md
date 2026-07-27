@@ -14,7 +14,7 @@ settled it.
 
 **Blocked by:** 01 — Extend the ignore rules to the framework's artefacts.
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 - [x] The blank Livewire starter kit is installed at the versions recorded in the spec
 - [x] PHPUnit is the test runner and no Pest package is present

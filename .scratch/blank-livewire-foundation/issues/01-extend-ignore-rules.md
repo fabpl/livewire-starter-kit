@@ -13,7 +13,7 @@ Expanding the rules first keeps each step independently committable.
 
 **Blocked by:** None — can start immediately.
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 - [x] Dependency directories for PHP and for Node are ignored
 - [x] Compiled asset output and the development-server marker files are ignored
