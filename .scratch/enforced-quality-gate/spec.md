@@ -66,22 +66,25 @@ because the gate needs capabilities the previous one does not have.
 17. As a developer, I want every line of application code executed by a test, so that untested code cannot be committed.
 18. As a developer, I want business logic kept out of route declarations, so that the measured perimeter cannot be sidestepped.
 19. As a developer, I want a way to check whether my tests actually detect changes, so that a coverage percentage does not become a number I trust blindly.
-20. As a developer, I want my templates, styles, scripts and workflow files formatted mechanically, so that the frontend is held to the same standard as the backend.
-21. As a developer, I want utility classes sorted automatically in my templates, so that class order is never a matter of opinion.
-22. As a developer, I want the formatter for templates and the formatter for PHP to have an enforced boundary, so that they cannot fight over the same file.
-23. As a maintainer, I want each tool to own its concern alone, so that the chain converges instead of oscillating.
-24. As a maintainer, I want fixers and verifiers separated, so that a broken rule is documented by its failure rather than repaired in silence.
-25. As a maintainer, I want machine-owned manifests and lockfiles left to their owners, so that installing a dependency does not turn the pipeline red.
-26. As a maintainer, I want tool thresholds pinned rather than aliased, so that upgrading a tool cannot raise the bar without a commit.
-27. As a maintainer, I want no suppression mechanism available anywhere, so that a failing check is fixed rather than filed away.
-28. As a maintainer, I want every tool version pinned in a lockfile, so that the chain is reproducible on a fresh machine.
-29. As a maintainer, I want each step of the rollout to leave the gate green, so that the default branch is never broken mid-effort.
-30. As an agent working in this repository, I want the standard I am held to expressed as executable configuration, so that I can verify my own work before reporting it done.
-31. As an agent working in this repository, I want to be told which repairs are forbidden when a check fails, so that I fix the code instead of weakening the gate.
-32. As an agent working in this repository, I want a way to raise a disagreement with a rule, so that my only options are not "comply" and "circumvent".
-33. As a future contributor, I want the departure from the upstream kit recorded as a decision, so that I do not mistake it for neglect.
-34. As a future contributor, I want the reversal on the test runner recorded as a decision, so that I do not treat it as an accident.
-35. As a future contributor, I want the measurements behind each choice preserved, so that reopening a decision starts from evidence rather than from taste.
+20. As a developer, I want the application driven in a real browser, so that a defect appearing only once the page executes is caught here rather than by a user.
+21. As a developer, I want console errors treated as test failures, so that a page that renders is never mistaken for a page that works.
+22. As a developer, I want my templates, styles, scripts and workflow files formatted mechanically, so that the frontend is held to the same standard as the backend.
+23. As a developer, I want utility classes sorted automatically in my templates, so that class order is never a matter of opinion.
+24. As a developer, I want the formatter for templates and the formatter for PHP to have an enforced boundary, so that they cannot fight over the same file.
+25. As a maintainer, I want each tool to own its concern alone, so that the chain converges instead of oscillating.
+26. As a maintainer, I want fixers and verifiers separated, so that a broken rule is documented by its failure rather than repaired in silence.
+27. As a maintainer, I want machine-owned manifests and lockfiles left to their owners, so that installing a dependency does not turn the pipeline red.
+28. As a maintainer, I want tool thresholds pinned rather than aliased, so that upgrading a tool cannot raise the bar without a commit.
+29. As a maintainer, I want browser scenarios kept out of the coverage measurement, so that a line a browser walked through cannot pass for a line a test asserts.
+30. As a maintainer, I want no suppression mechanism available anywhere, so that a failing check is fixed rather than filed away.
+31. As a maintainer, I want every tool version pinned in a lockfile, so that the chain is reproducible on a fresh machine.
+32. As a maintainer, I want each step of the rollout to leave the gate green, so that the default branch is never broken mid-effort.
+33. As an agent working in this repository, I want the standard I am held to expressed as executable configuration, so that I can verify my own work before reporting it done.
+34. As an agent working in this repository, I want to be told which repairs are forbidden when a check fails, so that I fix the code instead of weakening the gate.
+35. As an agent working in this repository, I want a way to raise a disagreement with a rule, so that my only options are not "comply" and "circumvent".
+36. As a future contributor, I want the departure from the upstream kit recorded as a decision, so that I do not mistake it for neglect.
+37. As a future contributor, I want the reversal on the test runner recorded as a decision, so that I do not treat it as an accident.
+38. As a future contributor, I want the measurements behind each choice preserved, so that reopening a decision starts from evidence rather than from taste.
 
 ## Implementation Decisions
 
@@ -323,17 +326,19 @@ documented in the quality-gate skill.
 
 ### Rollout
 
-Nine steps on the default branch, each leaving the gate green, each extending the aggregate
-command rather than editing the workflow. Continuous integration already delegates to the
-aggregate command, so only three steps touch a workflow file at all: the language version, the
-coverage driver, and the frontend dependency install.
+Ten steps on the default branch, each leaving the gate green, each extending the aggregate
+command rather than editing the workflow — the last two extend neither, since mutation and
+browser testing are commands beside it. Continuous integration already delegates to the aggregate
+command, so only three steps touch a workflow file at all: the language version, the coverage
+driver, and the frontend dependency install.
 
 The order is imposed by the green constraint, not chosen. Rewriting precedes analysis, because
 the type declarations it adds are what make the maximum level reachable without hand-written
 annotations. Rewriting precedes formatting, per the chain order. The Pest migration precedes
-architecture, coverage and mutation, which are all capabilities of it. The architecture step
-carries the code corrections it forces, because separating them would mechanically produce a
-red commit.
+architecture, coverage, mutation and browser testing, which are all capabilities of it. The
+architecture step carries the code corrections it forces, because separating them would
+mechanically produce a red commit. Browser testing comes last: its exclusion from the coverage
+measurement can only be demonstrated once there is a coverage measurement to be excluded from.
 
 ## Testing Decisions
 
@@ -368,8 +373,18 @@ Three verification points are added, all *inside* that seam rather than beside i
 3. **A forbidden-annotation check.** A script rather than a test, because no tool in the chain
    watches for the two ignore annotations and, without it, the prohibition is only an intention.
 
-No new seam is introduced for behaviour. The tests required to reach full coverage use the
-existing unit and feature suites.
+**A second seam is introduced, and it is outside the gate: the running page.** The browser suite
+drives the application through a real browser rather than through the framework's HTTP kernel,
+which is the only vantage point from which console output, script execution and built assets are
+observable at all. It is a genuine seam and not a variation on the first, because everything the
+aggregate command runs stops at the response body.
+
+Its separateness is load-bearing twice over. It must not contribute to the coverage measurement,
+and — since the maintainer keeps it out of the aggregate command — it must not be able to
+interfere with a run of it either.
+
+No new seam is introduced for behaviour *inside* the gate. The tests required to reach full
+coverage use the existing unit and feature suites.
 
 ### Coverage
 
@@ -381,6 +396,11 @@ and migrations are single-use scripts, so requiring coverage there produces test
 the framework can route and migrate — which the foundation effort already identified as wasted
 work. The escape that leaves open, logic hidden in a route closure outside the measured
 perimeter, is closed by *prohibiting the logic* rather than by measuring it.
+
+The browser suite is outside the measured perimeter in the other direction: it is not that its
+own files go unmeasured, but that the pass which measures never runs it. A line a browser
+scenario walked through must not count as covered, or the minimum becomes satisfiable by driving
+pages instead of by asserting behaviour.
 
 Two costs are known from reading the code rather than estimated. A model's initials helper
 carries a ternary whose second branch a single test would not exercise. A service provider
@@ -411,6 +431,38 @@ gate. A scheduled job was rejected because a red that nobody reads erodes the cr
 the gates that do matter, and this repository has neither a remote nor an audience for such a
 notification.
 
+### Browser scenarios
+
+Configured and available as its own command, deliberately **outside** the blocking gate, on the
+same terms as mutation and for a different reason.
+
+The gap it closes is one no other check in the chain can see. Static analysis reads types, the
+architecture rules read namespaces, the feature suite asserts a response — every one of them
+stops before the page executes. A template that renders and then throws in the browser, a script
+that fails to boot, an asset the build did not emit: none of that is visible to the gate, and all
+of it is visible to the first person who opens the application.
+
+Two things are asserted, in that order. First, that nothing was written to the browser console —
+the cheapest assertion available and the one most easily lost, because a page whose console is
+full of errors still returns a successful response and still satisfies every assertion the
+feature suite makes. Second, the success paths of the navigations the application offers. Only
+success paths: with one route today, the value of the scenarios is a harness ready for the tenth
+route, not the coverage they provide for the first.
+
+The suite is excluded from the coverage measurement, which is a requirement rather than a
+convenience. Nothing distinguishes a line a browser walked past from a line a unit test asserts,
+so counting browser traversal would let the hundred per cent minimum be satisfied by driving
+pages — ticket 09's requirement reduced to a formality. The exclusion is mechanical: the browser
+tests live in their own suite and the run that measures coverage does not execute it.
+
+Keeping it out of the aggregate command is the maintainer's decision, taken against the
+recommendation in this document, and both sides of it are recorded. Against: the chain's own
+argument, that an instrument nothing triggers will one day fail for reasons nobody tracked — the
+cost accepted for mutation only because mutation's runtime grows quadratically, which this does
+not. For: a browser suite inside the gate means installing a browser binary on every pipeline
+run, for an application that currently has a single page. The trade is explicitly provisional. If
+the application grows a real interface, this is the first decision to revisit.
+
 ### Prior art
 
 The foundation effort's aggregate-command pattern is the direct precedent for the seam. Its
@@ -430,6 +482,10 @@ a second place, and the two would drift.
 - Any scheduled, nightly or periodic workflow.
 - Any suppression, baseline or waiver mechanism, in any tool.
 - Making the mutation score a blocking requirement.
+- Making the browser suite part of the blocking gate, and installing a browser binary in the
+  pipeline.
+- Browser assertions beyond console hygiene and success-path navigation: no failure paths, no
+  visual regression, no accessibility auditing, no cross-browser or responsive matrix.
 - Branch or path coverage, and the heavier coverage driver it would require in the pipeline.
 - A domain glossary. There is no domain here, only tooling; a glossary would be corrupted by
   its first entry.
@@ -445,7 +501,7 @@ Every cost quoted in this document was measured against the tree rather than est
 one exception stated in place: the noise phpstan-strict-rules produces on idiomatic
 framework code, which cannot be known before installation.
 
-Five further unknowns are deliberately left to implementation rather than guessed, and each is
+Seven further unknowns are deliberately left to implementation rather than guessed, and each is
 a thing to *observe* rather than assume. Whether the architecture rules reach the test
 namespace, which would put the necessarily-abstract base test case in conflict with the
 prohibition on abstract classes. The mutation threshold, which is set from a measurement.
@@ -455,12 +511,22 @@ the two files it was tried on — neither candidate is a first-party project, an
 tool has a deserved reputation for breaking on unusual directives. And the size of the coverage
 step, the only one that is writing work rather than configuration.
 
-Three decisions reversed themselves, and all three corrections are recorded in place rather than
+The last two belong to the browser suite and were not measured because nothing was installed.
+Whether the browser plugin's own dependency resolution is compatible with the single point at
+which Pest, PHPUnit and `laravel/pao` already meet — the migration ticket found that point to be
+exact rather than roomy. And whether a browser scenario needs built frontend assets present,
+which would make the command's prerequisites larger than a binary download and is the kind of
+thing that turns "run this command" into "run these four".
+
+Four decisions reversed themselves, and all four corrections are recorded in place rather than
 quietly applied. The route-closure rule was first specified as an architecture assertion and is
 infeasible as such. Mutation testing was first accepted into the blocking gate and then removed
 from it. Documentation was first inside Prettier's perimeter and was taken out of it during
-implementation — the only one of the three reversed by the maintainer rather than by this
-document, and so the first live test of the escalation route.
+implementation. Browser testing was recommended *inside* the gate by this document and placed
+outside it by the maintainer. The last two are the ones reversed by the maintainer rather than by
+this document, and so the two live tests of the escalation route — in both cases the
+configuration was changed deliberately rather than routed around, which is the property the
+route exists to have.
 
 The rule most likely to be regretted is named in advance, with its fallback written down, so
 that reaching for it later is a decision rather than an improvisation.
