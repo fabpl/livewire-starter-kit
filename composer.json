@@ -64,10 +64,14 @@
         "types:check": [
             "phpstan analyse"
         ],
+        "annotations:check": [
+            "@php bin/check-annotations.php"
+        ],
         "test": [
             "@php artisan config:clear --ansi",
             "@lint:check",
             "@types:check",
+            "@annotations:check",
             "@php artisan test"
         ],
         "post-autoload-dump": [

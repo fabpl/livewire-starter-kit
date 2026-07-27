@@ -86,6 +86,7 @@ unlike prose it executes:
 | Coverage perimeter | `phpunit.xml`, `<source>` |
 | Architecture expectations | the arch test under `tests/` |
 | Frontend formatting and its boundary | `.prettierrc`, `.prettierignore` |
+| Forbidden suppression annotations | `bin/check-annotations.php` |
 | The chain itself | `composer.json`, `scripts` |
 
 If this file and a configuration file disagree, the configuration file is right and this one
