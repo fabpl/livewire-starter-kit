@@ -23,9 +23,21 @@ parameters:
 
         - config/
         - database/
-        - public/index.php
+
+        # The directory rather than its entry point alone, so that this list and Rector's
+        # say the same thing. Only `index.php` is PHP today; the build output vite writes
+        # here is not, and nothing else would be analysed by naming the directory.
+        - public/
+
         - routes/
         - tests/
+
+        # The two PHP files at the root. `artisan` carries no extension, so it is named as a
+        # file rather than found: Pint reaches it through the `lint` script and Rector cannot
+        # reach it at all, which leaves this the only analysis it gets. `rector.php` is the
+        # newest file in the tree and was reaching no analyser.
+        - artisan
+        - rector.php
 
     # Pinned as an integer rather than written as `max`. The alias means "the highest that
     # exists", so a release adding a level would turn the pipeline red on a dependency
