@@ -103,3 +103,25 @@ Rector's cache is written to `.rector.cache` beside the analyser's rather than t
 temporary directory, where every checkout on a machine would share one directory. The check was
 verified against a cold cache as well as a warm one, and verified both to fail on a tree Rector
 would change and to write nothing when it does.
+
+## Follow-up — code review of tickets 05, 06 and 07
+
+A review of the three configurations against the spec found two things this ticket left open,
+and both are now closed in a later commit rather than here.
+
+**One rule of the recommended set was carried in past a group that is off.**
+`AddSeeTestAnnotationRector` stamps a `@see` docblock on every class pointing at its test —
+Rector writing docblocks, which is the conflict the docblock-type group was disabled to avoid,
+arriving through a different door. Four rules from that set were already named individually in
+`withSkip()`; this one had been missed. It was inert on this tree only because the functional
+test style leaves no test classes for it to pair a class with, so nothing failed and nothing
+would have until the first test class existed. It is now skipped, with the ownership reasoning
+next to it.
+
+**The perimeter did not include `rector.php` itself.** The configuration file was reaching Pint
+and no other tool — the file that tells Rector to rewrite the tree being the one file Rector did
+not rewrite, and the newest PHP in the repository going to no analyser at all. It is now inside
+`withPaths()` and inside the analyser's paths. The checkbox above claiming the perimeter matched
+the rest of the chain was therefore ticked ahead of being true; `artisan` remains outside, for
+the extension reason ticket 06 records, and that gap is now stated in the spec rather than left
+to a ticket that was never opened.

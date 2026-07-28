@@ -117,15 +117,20 @@ to diagnose.
 | Strict equality | Pint | Pest architecture tests |
 | Import order and name importing | Pint | — |
 | Comment and docblock hygiene | Pint | — |
-| Class finality | Rector | Pest architecture tests |
+| Class finality | — (Rector, for test cases only) | Pest architecture tests |
+| Immutable date construction | Rector | — |
 | Dead code and type declarations | Rector | Larastan |
 | Templates, styles, scripts, workflows | Prettier | — |
 | Dependency manifests and lockfiles | Composer, npm | — |
 
-Class finality belongs to Rector and explicitly not to Pint. The reason is
-technical rather than aesthetic: Pint's rule is purely syntactic and would finalise
-the abstract base test case, which exists to be extended. Rector performs inheritance
-analysis before deciding. Only one of the two is correct.
+Class finality is the one concern in this table with no general fixer, and the reason is that
+no tool in the chain offers a correct one. Pint's rule is purely syntactic and would finalise
+the abstract base test case, which exists to be extended, so it stays excluded. Rector, which
+does perform inheritance analysis, turns out to ship finalisation only for test-case classes —
+that narrow rule is enabled, and it is the whole of the row. Everything else is left to the
+architecture verifier, which fails on a non-final class rather than repairing it. A concern
+with a verifier and no fixer is a weaker position than the rest of the table but not a broken
+one: nothing can drift silently, the failure simply has to be repaired by hand.
 
 ### Chain order
 
@@ -158,28 +163,44 @@ break the principle that framework conventions here are the standard ones.
 
 Rules added cover strict-type declarations, strict comparison and strict parameters, import
 ordering, importing of globally-qualified class names, class-element ordering, superfluous
-annotation removal, nullable-type normalisation, useless control-flow removal, string and
-heredoc consistency, and immutable date construction.
+annotation removal, nullable-type normalisation, useless control-flow removal, and string and
+heredoc consistency.
 
-Three exclusions are load-bearing and must not be quietly reinstated. Class finality and
-return-type insertion belong to Rector. Native function invocation is excluded because
-it wants a leading separator on global functions exactly where name importing wants an import
-statement — the two are in direct conflict, and the micro-optimisation does not justify the
-noise. Name importing is therefore limited to classes.
+Four exclusions are load-bearing and must not be quietly reinstated. Class finality and
+return-type insertion belong to Rector. Immutable date construction belongs to Rector's Carbon
+set: the two do not merely overlap, they disagree about the destination — Rector rewrites
+towards the framework's own date class, Pint's rule towards the native immutable one. Two
+fixers on one concern, and the chain converged only because Rector always reached the code
+first. Native function invocation is
+excluded because it wants a leading separator on global functions exactly where name importing
+wants an import statement — the two are in direct conflict, and the micro-optimisation does not
+justify the noise. Name importing is therefore limited to classes.
 
 ### Comments — Pint
 
 Pint's annotation-only rule does not tidy docblocks; it forbids comments. Any block
-or line comment carrying no annotation is deleted unless marked with one of three escape
-prefixes. Measured on the current tree, it removes prose docblocks whose entire content
-restates the method name, and a commented-out import, while preserving every typed
-annotation.
+or line comment carrying no annotation at all is deleted. Measured on the current tree, it
+removes prose docblocks whose entire content restates the method name, and a commented-out
+import, while preserving every typed annotation.
 
-This is the rule best aimed at the stated problem, because filler commentary is what agents
-produce in volume and nothing else in the chain sees it. The escape prefixes are the point
-rather than a loophole: they turn a comment into a deliberate act that shows up in a diff,
-instead of a reflex. Configuration files are exempt by the rule's own design, since
-configuration relies on commentary to document itself.
+What survives the rule is decided by the character `@` and nothing more. The three escape
+prefixes — `@note`, `@warning`, `@todo` — are a documentation convention rather than a
+mechanism: the implementation returns early on any comment containing an `@`, so an email
+address in an example preserves a comment exactly as well as a prefix does. The hatch is
+therefore wider than a list of three, and the prefixes are worth writing because a reader
+recognises them, not because the tool distinguishes them.
+
+The rule is still the one best aimed at the stated problem, because filler commentary is what
+agents produce in volume and nothing else in the chain sees it, and because the wide hatch is
+not a silent one: preserving an explanation takes a deliberate edit that shows up in a diff,
+which is what the prefixes were asked to cost. Configuration files are exempt by the rule's own
+design, since configuration relies on commentary to document itself.
+
+The shape of a preserved comment is constrained by the same mechanism, and the difference is
+not cosmetic. A `//` block is one token per line, so a prefix preserves only the line carrying
+it. A `/* … */` block is a single token, so one prefix anywhere preserves all of it. A `/** … */`
+docblock is rebuilt from its annotation lines, so prose inside one is lost even with a prefix.
+Explanation running to more than a line has to be a `/* @note … */` block.
 
 ### Structural rewriting — Rector
 
@@ -201,10 +222,25 @@ name is where human intent is least guessable by a heuristic and least verifiabl
 The docblock type group would make Rector a second docblock writer alongside
 Pint, which is exactly the oscillation the ownership rule exists to prevent.
 
+Turning a group off is not enough on its own, because the recommended set carries individual
+rules in past the groups they belong to. Four are therefore named rule by rule: increment
+style and strict-type declarations, which belong to Pint; strict equality, which belongs to
+Pint too; and the rule that stamps a `@see` docblock on every class pointing at its test,
+which is the docblock-writer conflict arriving by a different door. What the recommended set
+is kept *for* is the one rule nothing else in the chain provides — finalisation of test-case
+classes, the whole of what Rector contributes to the finality row of the ownership table.
+
 Automatic version detection here sits alongside a pinned analysis level, and that is
 consistent rather than contradictory: an alias moves when the *tool* updates, unrelated to the
 code, whereas version detection moves when *the framework* is upgraded — which is precisely
 when rewriting is wanted.
+
+The perimeter is the tree including Rector's own configuration file, which was reaching only
+Pint and so was the one file the tool that rewrites everything did not rewrite. One file
+remains outside it and cannot be brought in: `artisan` carries no extension, and Rector filters
+by extension before it filters by path, so naming the file achieves nothing. It is reached by
+Pint through the lint script and by Larastan through an explicit path, which leaves structural
+rewriting as the only part of the chain it escapes. The gap is stated rather than closed.
 
 ### Static analysis — Larastan
 
@@ -216,7 +252,9 @@ errors, so the raise itself is free today.
 Two official extensions — phpstan-strict-rules and phpstan-deprecation-rules — are added
 because they live *beyond* the maximum level and no level
 contains them — they are the part that bites. The analysed perimeter widens to tests, the
-public entry point and the whole bootstrap directory; the cost estimated in advance is one
+public directory and the whole bootstrap directory, and to the two PHP files at the root that
+no analyser was reading: `artisan`, named as a file because it carries no extension, and
+Rector's own configuration. The cost estimated in advance is one
 error, in an example test this effort deletes anyway. Both halves of that estimate turned out
 wrong, and the correction is recorded below rather than written over it, so that the estimate
 and what it actually cost stay legible against each other.
@@ -233,7 +271,13 @@ Measured at installation, that noise is negligible and the extension is kept. Th
 level 7 to the maximum, both extensions, the widened perimeter — reports five errors. Three are
 the same finding in kit-shipped configuration: an `array_filter` called without a callback, once
 in `config/app.php` and twice in `config/database.php`. All three take Laravel's own `filled(...)`
-as the second argument, which states the intent the loose semantics only implied. The other two
+as the second argument, which states an intent the loose semantics could only imply — and which
+is deliberately not the same predicate. The callback-less form drops everything falsy, so it
+discarded the string `"0"`; `filled(...)` keeps it and discards whitespace-only strings instead.
+That is a real change of behaviour in an effort that adds none elsewhere, and it is the right
+one here: an application key and a certificate authority path are values where `"0"` is as
+meaningful as any other character and a string of spaces is not a path. It is recorded because
+a rule that forces a rewrite does not get to decide the semantics silently. The other two
 are the shipped feature test calling `$this->get()`, which the functional style replaces with the
 plugin's `get()` function — the closure Pest binds is not a method, so the analyser was right
 that the call had no receiver it could see. Nothing was suppressed and no signature widened.

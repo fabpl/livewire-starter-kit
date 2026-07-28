@@ -139,3 +139,28 @@ in the seeder. Every typed annotation survived, including the model's `@property
 above `casts()`; `global_namespace_import` turned the two `#[\Override]` attributes into an
 import. Nothing was excluded from Pint's perimeter, and `composer fix` on the committed tree
 changes no file.
+
+## Follow-up — code review of tickets 05, 06 and 07
+
+A review of the three configurations against the spec found that this ticket's two most
+consequential findings never left it. Both were decided correctly here and recorded here, and
+the spec — which is the document a reader consults — went on saying the opposite. They are now
+written into it.
+
+**`date_time_immutable` is gone from Pint and the spec still listed it** among the rules Pint
+adds. The measurement above is the reason, and it is a stronger one than a mere overlap: Rector's
+Carbon set and Pint's rule disagree about the destination. The spec's Pint section now names the
+exclusion as load-bearing alongside the other three, and the ownership table gains the row.
+
+**The three escape prefixes are a documentation convention, not a mechanism**, as the analysis of
+`TypeAnnotationsOnlyFixer::processComment()` above establishes. The spec described a list of three
+markers; the implementation preserves any comment containing an `@`. That is a wider hatch than
+the spec claimed, and a spec that understates its own escape route is the one kind of error this
+effort cannot afford. The section now states the mechanism, and carries the consequence for how a
+preserved comment has to be written — a distinction this ticket discovered and the spec never had.
+
+The `artisan` gap this ticket says "belongs in a ticket of its own" did not get one. It is instead
+stated in the spec, in Rector's section, as a permanent property of the tool rather than an item of
+work: Rector filters by extension before path, so the file cannot be brought in at all. The
+analyser now names it explicitly, which leaves structural rewriting the only part of the chain it
+escapes.

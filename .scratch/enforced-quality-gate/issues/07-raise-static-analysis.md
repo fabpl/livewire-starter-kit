@@ -82,3 +82,27 @@ in passing on a ticket that named the file.
 
 No baseline file exists, none is referenced, and none was generated at any point — including as
 a temporary measure while fixing the five errors.
+
+## Follow-up — code review of tickets 05, 06 and 07
+
+A review of the three configurations against the spec closed the asymmetry this ticket recorded
+rather than resolved, and corrected one claim it left in the spec.
+
+**`public` is now analysed whole.** The paragraph above says widening it "would close it in one
+word — a deliberate change for a human to make, not one to take in passing on a ticket that named
+the file." It was raised with the maintainer and taken deliberately, which is the route the spec
+asks for. The analyser and Rector now say the same thing about that directory, and a second PHP
+file added there would be seen by both.
+
+**The perimeter widened again, to the two PHP files at the root.** `rector.php` was reaching no
+analyser, and `artisan` was reaching none either — it carries no extension, so no directory walk
+finds it and it has to be named as a file. Both are now listed. Verified rather than assumed:
+`artisan` was temporarily given a defect and the analyser reported it, then restored. Neither file
+costs an error at level 10 with both extensions.
+
+**The `filled(...)` rewrite is not the equivalence the spec implied.** The spec said the callback
+"states the intent the loose semantics only implied"; in fact it changes the predicate — the
+callback-less form dropped the string `"0"`, and `filled(...)` keeps it while dropping
+whitespace-only strings. The change is right for an application key and a certificate authority
+path, and it is the only behaviour this whole effort alters, so the spec now says what it does
+instead of presenting it as a restatement.
