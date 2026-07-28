@@ -62,10 +62,10 @@
             "rector process --dry-run"
         ],
         "lint": [
-            "pint --parallel"
+            "pint --parallel . artisan"
         ],
         "lint:check": [
-            "pint --parallel --test"
+            "pint --parallel --test . artisan"
         ],
         "format": [
             "npm run format"
