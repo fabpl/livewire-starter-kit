@@ -50,17 +50,17 @@ gap, decided as such.
 
 **Blocked by:** None — can start immediately.
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] Trusted hosts are enabled with no explicit list, so the value derives from the configured application URL
-- [ ] A comment at that call site records that the suite cannot observe it, and why
-- [ ] Trusted proxies are limited to the loopback address and the three private ranges, written as literals
-- [ ] A comment at that call site names the case the list does not cover — an edge on public addresses
-- [ ] No environment lookup is used to build either list
-- [ ] A request whose peer address is private and whose forwarded address is public resolves the client IP to the forwarded one, and a test asserts it
-- [ ] A request whose peer address is public does not honour its forwarded address, and a test asserts it
-- [ ] The environment example carries the session cookie's secure setting, commented, in the session block, following the file's existing convention for commented settings
-- [ ] Local development over plain HTTP still works — the commented setting is not activated
-- [ ] Full coverage of the application namespace still holds, with no suppression and no lowered threshold
-- [ ] `composer test` passes
-- [ ] Committed as a single commit following the repository's Conventional Commits convention
+- [x] Trusted hosts are enabled with no explicit list, so the value derives from the configured application URL
+- [x] A comment at that call site records that the suite cannot observe it, and why
+- [x] Trusted proxies are limited to the loopback address and the three private ranges, written as literals
+- [x] A comment at that call site names the case the list does not cover — an edge on public addresses
+- [x] No environment lookup is used to build either list
+- [x] A request whose peer address is private and whose forwarded address is public resolves the client IP to the forwarded one, and a test asserts it
+- [x] A request whose peer address is public does not honour its forwarded address, and a test asserts it
+- [x] The environment example carries the session cookie's secure setting, commented, in the session block, following the file's existing convention for commented settings
+- [x] Local development over plain HTTP still works — the commented setting is not activated
+- [x] Full coverage of the application namespace still holds, with no suppression and no lowered threshold
+- [x] `composer test` passes
+- [x] Committed as a single commit following the repository's Conventional Commits convention
