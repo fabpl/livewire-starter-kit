@@ -92,11 +92,11 @@
         ],
         "test": [
             "@php artisan config:clear --ansi",
+            "@annotations:check",
             "@lint:check",
             "@format:check",
             "@refactor:check",
             "@types:check",
-            "@annotations:check",
             "@php vendor/bin/pest"
         ],
         "post-autoload-dump": [
