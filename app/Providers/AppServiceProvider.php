@@ -11,7 +11,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Override;
 
-class AppServiceProvider extends ServiceProvider
+final class AppServiceProvider extends ServiceProvider
 {
     #[Override]
     public function register(): void
@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
     }
 
-    protected function configureDefaults(): void
+    private function configureDefaults(): void
     {
         Date::use(CarbonImmutable::class);
 

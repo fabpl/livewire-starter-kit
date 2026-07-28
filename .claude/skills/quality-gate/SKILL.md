@@ -84,7 +84,8 @@ unlike prose it executes:
 | Structural rewrites | `rector.php` |
 | Static analysis level, paths, extensions | `phpstan.neon` |
 | Coverage perimeter | `phpunit.xml`, `<source>` |
-| Architecture expectations | the arch test under `tests/` |
+| Architecture expectations | `tests/Feature/ArchitectureTest.php` |
+| Closures forbidden as route actions | `tests/Feature/RoutingTest.php` |
 | Frontend formatting and its boundary | `.prettierrc`, `.prettierignore` |
 | Forbidden suppression annotations | `bin/check-annotations.php` |
 | The chain itself | `composer.json`, `scripts` |
