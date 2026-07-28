@@ -24,16 +24,82 @@ make Rector a second docblock writer alongside Pint.
 
 **Blocked by:** 01, 04
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] Rector and its Laravel rule package are development dependencies
-- [ ] Exactly the agreed rule groups are enabled and no others
-- [ ] The coding-style, naming, docblock-type, named-argument and test-framework groups are absent
-- [ ] The language target and the framework version are both resolved from the dependency manifest rather than pinned by hand
-- [ ] Rector's perimeter matches the tree the rest of the chain covers
-- [ ] A fix command applies rewrites and a check command reports without writing
-- [ ] The aggregate command runs the check form and fails on a tree Rector would change
-- [ ] The whole tree is rewritten and committed
-- [ ] Running Rector a second time produces no further change
-- [ ] `composer test` passes
-- [ ] Committed as a single commit following the repository's Conventional Commits convention
+- [x] Rector and its Laravel rule package are development dependencies
+- [x] Exactly the agreed rule groups are enabled and no others
+- [x] The coding-style, naming, docblock-type, named-argument and test-framework groups are absent
+- [x] The language target and the framework version are both resolved from the dependency manifest rather than pinned by hand
+- [x] Rector's perimeter matches the tree the rest of the chain covers
+- [x] A fix command applies rewrites and a check command reports without writing
+- [x] The aggregate command runs the check form and fails on a tree Rector would change
+- [x] The whole tree is rewritten and committed
+- [x] Running Rector a second time produces no further change
+- [x] `composer test` passes
+- [x] Committed as a single commit following the repository's Conventional Commits convention
+
+## Comments
+
+The spec's nine rule groups map one to one onto `withPreparedSets()` arguments, and the five
+groups it names as excluded are all real arguments left at their default. The mapping is worth
+recording because two of the spec's names are paraphrases: "conditional simplification" is the
+`if` group, and "a deprecated group the tool itself warns about" is `strictBooleans`, which
+Rector 2.5 prints a warning for and tells you to replace with the code-quality and coding-style
+sets. Framework and language targets both resolve from `composer.json`: `withPhpSets()` with no
+argument reads `require.php`, and `withComposerBased(laravel: true)` loads only the sets whose
+composer trigger matches an installed package — the Laravel version sets, Faker and Livewire 4.
+The Laravel provider's untriggered sets, among them "replace facades with service injection",
+are not loaded by that call.
+
+**The ownership table's line on class finality does not hold in this version, and nothing was
+done to force it.** Rector 2.5 ships no rule that finalises classes without children — the rule
+the spec assumed was removed before this release, and the only finality rule that remains is
+`FinalizeTestCaseClassRector`, which the recommended set already carries and which has nothing
+to act on now that no test classes exist. So no class in the tree became final under this
+ticket. The spec's reasoning for keeping finality away from Pint is untouched by this; what
+changes is that the *verifier* named in that table — the architecture assertions of ticket 08 —
+is now the only thing that will enforce finality, with the fix left to hand.
+
+**Four rules were taken out because the concern they act on belongs to Pint.** Enabling a group
+is not the same as accepting every rule inside it: the spec settles ownership per concern, and
+the enabled groups reach across that line in four places. The audit was done against the
+419 rules the configuration actually registers rather than against the group names.
+
+- `DeclareStrictTypesRector` (recommended set) and `SafeDeclareStrictTypesRector` (code quality)
+  write `declare(strict_types=1)`, which the table gives to Pint and which the spec measures at
+  26 of 30 files under the Pint section. Left enabled they were rewriting 20 files here, in the
+  wrong ticket. Worse, the safe variant declines files it judges risky, so it left
+  `public/index.php` and `tests/Feature/ExampleTest.php` without the declaration — a tree
+  covered unevenly is the visible symptom of a concern owned by the wrong tool.
+- `UseIdenticalOverEqualWithSameTypeRector` (code quality) rewrites `==` to `===`. Strict
+  equality is Pint's row. Rector's version is the more careful of the two, acting only where it
+  can prove the operand types match, but the spec chose Pint's — which acts on every comparison
+  — and a concern with a careful owner and a thorough one still has two owners.
+- `PostIncDecToPreIncDecRector` (recommended set) is a coding-style rule carried in past the
+  coding-style group being switched off, and it is the one that does not merely overlap: it
+  rewrites `$scanned++` to `++$scanned` in `bin/check-annotations.php` while Pint's
+  `increment_style` rewrites it straight back. Run twice, `composer fix` produced the same two
+  edits again — precisely the non-terminating aggregate command the ownership rule exists to
+  prevent.
+
+What the audit found clean is worth recording too, since it is the reason nothing further was
+touched. Rector never imports names — `withImportNames()` is off by default — so import order
+and name importing stay wholly Pint's. No enabled rule adds a prose docblock: the twelve
+docblock rules that remain either remove tags, which converges with Pint's superfluous-tag
+removal rather than fighting it, or read docblocks to infer native types, and the one rule that
+writes a `@param` only acts on Rector's own rule classes. The two concatenation rules are
+code-quality simplifications, not the quoting and heredoc consistency Pint owns.
+
+`bootstrap/cache` had to leave the perimeter for a different reason: the framework regenerates
+it on every package discovery, git ignores it, and Rector rewrote its two generated files
+wholesale. Left in, `composer setup` followed by `composer test` would fail in the pipeline on
+files this repository does not own. Pint excludes the same directory.
+
+What the rewrite actually did, once the four rules were out, is nine files: return types on
+closures and arrow functions, `#[\Override]` on the two overridden methods, and one early
+return. That is the whole of Rector's own row in the table on a tree this size.
+
+Rector's cache is written to `.rector.cache` beside the analyser's rather than to the system
+temporary directory, where every checkout on a machine would share one directory. The check was
+verified against a cold cache as well as a warm one, and verified both to fail on a tree Rector
+would change and to write nothing when it does.
