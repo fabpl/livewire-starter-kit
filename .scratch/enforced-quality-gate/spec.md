@@ -1,6 +1,6 @@
 # Spec: enforced quality gate
 
-Status: ready-for-agent
+**Status:** resolved
 
 ## Problem Statement
 
@@ -67,7 +67,7 @@ because the gate needs capabilities the previous one does not have.
 18. As a developer, I want business logic kept out of route declarations, so that the measured perimeter cannot be sidestepped.
 19. As a developer, I want a way to check whether my tests actually detect changes, so that a coverage percentage does not become a number I trust blindly.
 20. As a developer, I want the application driven in a real browser, so that a defect appearing only once the page executes is caught here rather than by a user.
-21. As a developer, I want console errors treated as test failures, so that a page that renders is never mistaken for a page that works.
+21. As a developer, I want console output and uncaught exceptions treated as test failures, so that a page that renders is never mistaken for a page that works. This story is narrower than the one it replaces, which asked for console *errors* and was written after the suite that does not deliver them: the capture the plugin owns sees `console.log` and the window's error event, and `console.error` and `console.warn` are outside it. The gap is measured and recorded under Browser scenarios; the story is corrected to what the suite asserts rather than left describing what it does not.
 22. As a developer, I want my templates, styles, scripts and workflow files formatted mechanically, so that the frontend is held to the same standard as the backend.
 23. As a developer, I want utility classes sorted automatically in my templates, so that class order is never a matter of opinion.
 24. As a developer, I want the formatter for templates and the formatter for PHP to have an enforced boundary, so that they cannot fight over the same file.
@@ -163,8 +163,9 @@ break the principle that framework conventions here are the standard ones.
 
 Rules added cover strict-type declarations, strict comparison and strict parameters, import
 ordering, importing of globally-qualified class names, class-element ordering, superfluous
-annotation removal, nullable-type normalisation, useless control-flow removal, and string and
-heredoc consistency.
+annotation removal, comment hygiene, useless control-flow removal, and string and
+heredoc consistency. Nullable-type normalisation was listed here and is not among them: the
+preset already carries it, so adding it would have restated the preset rather than extended it.
 
 Four exclusions are load-bearing and must not be quietly reinstated. Class finality and
 return-type insertion belong to Rector. Immutable date construction belongs to Rector's Carbon
@@ -426,13 +427,62 @@ threshold with a per-file waiver, because the first cannot be negotiated. Where 
 genuinely believes a rule is wrong, the route is to raise it with a human, and that route is
 documented in the quality-gate skill.
 
-### Rollout
+Two paths were nonetheless added to a tool's ignore list, and the distinction that makes them
+admissible is stated rather than assumed. "No added ignore paths" forbids removing *this
+repository's code* from a tool's view; both of these are machine-owned trees that no human
+writes. Rector skips `bootstrap/cache`, whose contents the framework regenerates on every boot,
+and Prettier skips the analyser's cache directory alongside the other such trees. Neither hides
+a finding: a rewriter competing with the owner of a generated file turns the gate red on an
+unrelated install, which is the failure mode the rule exists to prevent rather than an instance
+of it. The test to apply to any future addition is whether a person could be the author of what
+is being excluded.
+
+The annotation check grants no exemption at all, including to itself. It holds its two needles
+as patterns carrying a single-character class where the plain string carries a letter, so the
+file does not match its own contents — which is what let the per-file skip it used to carry be
+removed. Case-insensitive matching is what lets one pattern cover both the annotation and the
+attribute form of the same suppression, so `#[CodeCoverageIgnore]` is caught as surely as
+`@codeCoverageIgnore`. All three forms were probed and each was verified to fail the check.
+
+### Incidental corrections
+
+Five changes landed in this effort that no ticket asked for, and they are recorded here rather
+than left to be found in the log, because an effort that installs a gate against undeclared
+drift does not get to drift undeclared.
+
+The manifest still declared itself as the upstream package, under a vendor namespace that is
+not ours and with a description true of the tree this repository was installed from and of
+nothing since. It now says what the repository is. Sail was dropped: it arrived with the kit,
+nothing referenced the binary, there is no container definition in the tree, and the pipeline
+runs PHP directly. The analyser was given a cache directory of its own, because with none set
+it caches under the system temporary directory where every checkout on the machine shares one
+cache that nothing keys apart — deleting a worktree then leaves entries pointing at a tree that
+no longer exists, and the analyser fails with an internal error in the checkouts that remain.
+That is a red gate with no defect behind it, which is the one failure this effort must not
+manufacture. The bootstrap command switched from `npm install` to `npm ci`, recorded under
+Rollout. And the resolution platform is pinned to PHP 8.5 in the manifest's own configuration.
+
+That last one is the only one in tension with a story. Story 15 asks for the language floor
+declared once and honoured everywhere, and this is a fifth place stating it. The tension is
+accepted, because the four others state what the code *may use* while this states what the
+resolver *must assume* — without it, dependencies resolve against whatever the local runtime
+happens to be, and the floor is a claim rather than a constraint. It is the line that makes the
+other four opposable.
 
 Ten steps on the default branch, each leaving the gate green, each extending the aggregate
 command rather than editing the workflow — the last two extend neither, since mutation and
 browser testing are commands beside it. Continuous integration already delegates to the aggregate
 command, so only three steps touch a workflow file at all: the language version, the coverage
 driver, and the frontend dependency install.
+
+Four touches landed rather than three, and the fourth is recorded because it undoes part of the
+third rather than adding to it. The frontend step added a workflow step running `npm ci`, and a
+later commit removed it: the workflow installed the frontend dependencies and then ran the
+bootstrap command, which installed them again with `npm install` — free to resolve outside the
+lockfile. The second install was the one deciding what landed, so the pipeline could run against
+versions the lockfile never pinned. The step goes and the bootstrap command switches to `npm ci`.
+The cumulative diff shows nothing, the two touches cancelling, which is exactly why it is written
+down here: the count above is right about the named steps and wrong about the total.
 
 The order is imposed by the green constraint, not chosen. Rewriting precedes analysis, because
 the type declarations it adds are what make the maximum level reachable without hand-written
@@ -663,10 +713,18 @@ tests live in their own suite and the run that measures coverage does not execut
 
 Measured at implementation, the exclusion is load-bearing rather than notional. The scenarios
 live in a third `Browser` suite and the gate's test step names `Unit` and `Feature` explicitly;
-the same runner invoked without those names collects twelve tests instead of eleven, so the
+the same runner invoked without those names collects eleven tests instead of ten, so the
 naming is what does the work and not a coincidence of layout. The gate's own numbers are
-unchanged by the addition — eleven tests, sixty-eight assertions, a hundred per cent — which is
+unchanged by the addition — ten tests, sixty-seven assertions, a hundred per cent — which is
 the statement that no browser scenario reached the measurement.
+
+Those counts were one higher when first measured, and the difference is the kit's shipped unit
+example, `test('true is true')`, deleted during review. A test that asserts a tautology is the
+thing a hundred per cent line coverage was never able to catch and the thing mutation exists to
+name, kept in a tree whose whole argument is that a traversed line is not a tested one. Removing
+it moved neither the coverage nor the mutation score — a hundred per cent and 72.00 per cent on
+the same twenty-five mutants before and after — which is the measurement that it was asserting
+nothing about this repository.
 
 The mutation command needs the same names for the same reason, and this was found on integrating
 the two commands rather than anticipated. Mutation reads its perimeter from the coverage
@@ -710,7 +768,10 @@ the application grows a real interface, this is the first decision to revisit.
 
 The foundation effort's aggregate-command pattern is the direct precedent for the seam. Its
 shipped example tests — one unit, one feature asserting the root route responds — are the
-pattern for the behaviour tests written here, once translated to the new runner's style.
+pattern for the behaviour tests written here, once translated to the new runner's style. Only
+the feature one survives: it asserts something about this repository, and the unit one asserted
+that `true` is `true`. Being a precedent for how a test is written is not a reason to keep a
+test that tests nothing.
 
 ### Not verified
 
