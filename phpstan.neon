@@ -2,16 +2,35 @@ includes:
     - vendor/larastan/larastan/extension.neon
     - vendor/nesbot/carbon/extension.neon
 
+    # Both sets live beyond the highest level, so no level contains them and raising the
+    # level alone would not bring them in. They are the part that actually bites: the
+    # strict set rejects the loose constructs the language still permits, and the
+    # deprecation set fails on framework API scheduled for removal rather than leaving it
+    # to be discovered at the next major upgrade.
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+    - vendor/phpstan/phpstan-deprecation-rules/rules.neon
+
 parameters:
     paths:
         - app/
         - bin/
-        - bootstrap/app.php
+
+        # Whole, including `bootstrap/cache`, which Rector and Pint both exclude. The
+        # asymmetry is deliberate: those two rewrite the framework's generated files and
+        # would compete with the owner of them, whereas this only reads. Verified against a
+        # tree with those files generated.
+        - bootstrap/
+
         - config/
         - database/
+        - public/index.php
         - routes/
+        - tests/
 
-    level: 7
+    # Pinned as an integer rather than written as `max`. The alias means "the highest that
+    # exists", so a release adding a level would turn the pipeline red on a dependency
+    # update nobody connected to it. Raising the bar should be a commit.
+    level: 10
 
     phpVersion: 80500
 
