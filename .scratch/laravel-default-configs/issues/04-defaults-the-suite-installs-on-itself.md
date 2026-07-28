@@ -35,14 +35,44 @@ Two ordinary assertions close it, at no new seam.
 
 **Blocked by:** None — can start immediately.
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] Both defaults are installed by the test bootstrap, per test, and neither is installed by the application service provider
-- [ ] Neither carries a "running under test" condition
-- [ ] Both are scoped to the unit and feature suites; the browser suite is left with its own notion of waiting and its own network
-- [ ] An outbound HTTP call that was not faked fails a test, and a test asserts it
-- [ ] A sleep is recorded rather than served, and a test asserts it
-- [ ] The suite's wall-clock time does not increase measurably
-- [ ] Full coverage of the application namespace still holds, with no suppression and no lowered threshold
-- [ ] `composer test` passes
-- [ ] Committed as a single commit following the repository's Conventional Commits convention
+- [x] Both defaults are installed by the test bootstrap, per test, and neither is installed by the application service provider
+- [x] Neither carries a "running under test" condition
+- [x] Both are scoped to the unit and feature suites; the browser suite is left with its own notion of waiting and its own network
+- [x] An outbound HTTP call that was not faked fails a test, and a test asserts it
+- [x] A sleep is recorded rather than served, and a test asserts it
+- [x] The suite's wall-clock time does not increase measurably
+- [x] Full coverage of the application namespace still holds, with no suppression and no lowered threshold
+- [x] `composer test` passes
+- [x] Committed as a single commit following the repository's Conventional Commits convention
+
+## Comments
+
+Both live in `tests/Pest.php`, in one `beforeEach` scoped `->in('Feature', 'Unit')`. The
+application service provider is untouched, and neither call asks whether it is running under
+test — there is nowhere left for that question to be asked.
+
+**The scope is asserted rather than declared.** The two tests sit in different suites on
+purpose — the prohibition in `tests/Feature/ProhibitedStrayRequestsTest.php`, the faked sleep
+in `tests/Unit/FakedSleepTest.php` — so that dropping either name from the scope fails a test
+instead of passing in silence. Both directions were verified by removing one name at a time and
+watching the corresponding test fail. What this does not buy is the other half of the matrix:
+nothing asserts that the sleep is faked under `Feature` or that stray requests are prohibited
+under `Unit`. Closing that would take four tests where the ticket budgets two, and the failure
+it would catch — Pest's directory scoping applying to one listed directory but not another —
+is not a failure this bootstrap can produce.
+
+**The browser suite's exclusion is by construction, not by measurement.** The browser plugin
+scopes its own hooks with the same `->in()` mechanism, and that mechanism was shown to exclude
+unlisted directories. Observing it directly would have meant installing Playwright, which the
+suite this ticket touches does not need.
+
+**The faked-sleep test asserts on the recorded sequence and nothing else.** A first draft also
+measured elapsed time, and the review removed it as adding no kill power: the fake appends the
+duration and returns, so recording and serving are mutually exclusive by construction and no
+reachable state passes `Sleep::assertSequence` while having actually slept.
+
+**Wall-clock.** The unit and feature suites went from 560 ms over ten tests to about 640 ms
+over twelve. The added time is the two new tests booting, not the defaults, which cost nothing
+per test and can only ever remove waiting.
