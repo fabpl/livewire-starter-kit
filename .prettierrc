@@ -12,12 +12,6 @@
             "options": {
                 "tabWidth": 2
             }
-        },
-        {
-            "files": ["{compose,docker-compose}.{yml,yaml}"],
-            "options": {
-                "tabWidth": 4
-            }
         }
     ]
 }
