@@ -21,11 +21,11 @@ That is real, rare, and undone by commenting out one line — which the test doc
 
 **Blocked by:** None — can start immediately.
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] URLs generated while the application runs in production use the HTTPS scheme, and a test asserts it
-- [ ] A test asserts that outside production the scheme is left as the framework produces it, following the two-case shape of the existing password-defaults test
-- [ ] The test sets the application URL explicitly rather than depending on the ambient one, which the test configuration does not pin and which may be absent in the pipeline
-- [ ] Full coverage of the application namespace still holds, with no suppression and no lowered threshold
-- [ ] `composer test` passes
-- [ ] Committed as a single commit following the repository's Conventional Commits convention
+- [x] URLs generated while the application runs in production use the HTTPS scheme, and a test asserts it
+- [x] A test asserts that outside production the scheme is left as the framework produces it, following the two-case shape of the existing password-defaults test
+- [x] The test sets the application URL explicitly rather than depending on the ambient one, which the test configuration does not pin and which may be absent in the pipeline
+- [x] Full coverage of the application namespace still holds, with no suppression and no lowered threshold
+- [x] `composer test` passes
+- [x] Committed as a single commit following the repository's Conventional Commits convention
