@@ -2,9 +2,17 @@
 
 declare(strict_types=1);
 
+/*
+ * @note The needles are patterns rather than literals, and each one carries a single-character
+ * class where the plain string would carry a letter. That is what stops this file from
+ * reporting itself, and it replaces the per-file exemption that used to sit in the loop below:
+ * the check that exists because this repository grants no waiver was granting exactly one.
+ * Matching is case-insensitive, which is what lets a single pattern cover the annotation and
+ * the attribute form of the same suppression.
+ */
 $forbidden = [
-    '@codeCoverageIgnore',
-    '@pest-mutate-ignore',
+    '/codeCoverage[I]gnore/i',
+    '/pest-mutate[-]ignore/i',
 ];
 
 $phpSources = ['*.php', 'artisan'];
@@ -31,13 +39,10 @@ if ($status !== 0) {
 }
 
 $offences = [];
-$scanned = 0;
 
 foreach ($files as $file) {
-    $path = $root.DIRECTORY_SEPARATOR.$file;
-    if ($path === __FILE__) {
-        continue;
-    }
+    $path = $root.'/'.$file;
+
     if (! is_file($path)) {
         continue;
     }
@@ -48,11 +53,9 @@ foreach ($files as $file) {
         continue;
     }
 
-    $scanned++;
-
     foreach ($lines as $index => $line) {
-        foreach ($forbidden as $annotation) {
-            if (stripos($line, $annotation) !== false) {
+        foreach ($forbidden as $pattern) {
+            if (preg_match($pattern, $line) === 1) {
                 $offences[] = sprintf('%s:%d: %s', $file, $index + 1, trim($line));
 
                 continue 2;
@@ -74,10 +77,6 @@ if ($offences !== []) {
     exit(1);
 }
 
-fwrite(STDOUT, json_encode([
-    'tool' => 'annotations',
-    'result' => 'passed',
-    'files' => $scanned,
-], JSON_THROW_ON_ERROR)."\n");
+fwrite(STDOUT, "No forbidden suppression annotations.\n");
 
 exit(0);
