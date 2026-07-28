@@ -30,13 +30,32 @@ foundation's single model purely so that a test can violate it. That addition is
 
 **Blocked by:** None — can start immediately.
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] Models are strict in every environment except production
-- [ ] Assigning an attribute the model does not declare raises, and a test asserts it
-- [ ] A test asserts that the same assignment is tolerated once the application runs in production, following the two-case shape of the existing password-defaults test
-- [ ] No relationship is added to any model in order to make something testable
-- [ ] The existing suite passes without any test being loosened to accommodate strictness; if one needed changing, the change is a correction and is recorded in the comments below
-- [ ] Full coverage of the application namespace still holds, with no suppression and no lowered threshold
-- [ ] `composer test` passes
-- [ ] Committed as a single commit following the repository's Conventional Commits convention
+- [x] Models are strict in every environment except production
+- [x] Assigning an attribute the model does not declare raises, and a test asserts it
+- [x] A test asserts that the same assignment is tolerated once the application runs in production, following the two-case shape of the existing password-defaults test
+- [x] No relationship is added to any model in order to make something testable
+- [x] The existing suite passes without any test being loosened to accommodate strictness; if one needed changing, the change is a correction and is recorded in the comments below
+- [x] Full coverage of the application namespace still holds, with no suppression and no lowered threshold
+- [x] `composer test` passes
+- [x] Committed as a single commit following the repository's Conventional Commits convention
+
+## Comments
+
+The suite was clean, as the ticket predicted: no existing test needed changing, so there is no
+correction to record. `Model::shouldBeStrict(! app()->isProduction())` in the provider and
+`tests/Feature/StrictModelsTest.php` are the whole change.
+
+No comment was written at the call site. The point-of-call exception the spec's placement rule
+describes belongs to a default no level makes provable, and this one is provable — the two
+cases the test carries are what state the decision. The two environment-gated rules the call
+sits between carry no comment either. The reasoning for the direction of the gate stays in the
+spec, and ADR-0003 records the rule.
+
+The test file does carry a note, for the opposite reason: it records what is deliberately *not*
+asserted, which nothing in the code can show.
+
+Mutation was run beyond the gate to confirm the two cases earn their keep. Both mutants on the
+new call are killed — dropping the negation fails the first case, removing the condition fails
+the second — and the score stays above the `mutate` script's minimum.
