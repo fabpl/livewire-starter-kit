@@ -320,6 +320,47 @@ protected helper becomes private, and a model's cast declaration becomes public 
 public rather than private, because the framework declares it protected and the language
 forbids narrowing visibility on override.
 
+Three collisions were named in advance and five were found, and the difference is recorded
+rather than written over. The two unnamed ones are the shipped factory and the shipped seeder,
+non-final like everything else the kit ships — missed because the reading that produced the
+list looked at the application namespace and the rules apply to every namespace the dependency
+manifest declares, which here is three. Neither cost anything but a keyword. What one of them
+cost afterwards is the more interesting half: finalising the factory let Rector privatise its
+cached-password property, and a private property is one the analyser can reason about, so the
+maximum level immediately reported a `null` in its type that nothing ever assigns. The type was
+narrowed to match. That is three tools agreeing in sequence rather than a rule forcing a
+change, and it is the clearest evidence so far that the chain is one thing and not five.
+
+The finality row of the ownership table is weaker in practice than it reads, and the measurement
+belongs here rather than being left to be rediscovered. Rector's contribution to that row is
+finalisation of test-case classes, and the functional test style leaves no test classes — so on
+this tree Rector finalises **nothing**. Verified by un-finalising two classes and running it:
+zero changes. Every `final` keyword in the tree was written by hand under pressure from the
+architecture rules, which report a non-final class rather than repairing it. The row therefore
+has a verifier and, today, no fixer at all. Nothing can drift silently, but the repair is manual
+in every case rather than in the residual ones.
+
+The presets are invoked by constructing Pest's preset object inside an architecture test rather
+than through the documented `arch()->preset()` chain, and the reason is a genuine collision
+between two members of the gate. That chain resolves through a class Pest annotates with a
+union `@mixin`, which the analyser does not follow, so at the maximum level it reports the
+call as undefined — eight errors, on four lines that are correct. Both available repairs were
+forbidden: no ignore annotation, and no path removed from the analysed perimeter. Constructing
+the object directly is neither, and it was verified equivalent rather than assumed — the same
+sixty assertions, and a deliberately non-final class still fails the suite. The cost is that
+this reaches an API Pest marks internal; the mitigation is that the documented chain reaches
+the same class by a longer route, so an upstream change breaking one would break both.
+
+Whether the rules reach the test namespace was the effort's first open unknown, and it is
+settled by observation: **they do not.** Pest builds its perimeter from the namespaces the
+dependency manifest declares and then discards every one whose directory is under `tests`, so
+`Tests\` is outside the rules by construction. Probed rather than read off the source — a class
+placed in that namespace violating four strict expectations at once, abstract and non-final
+with a protected method and a loose comparison, is not seen. The conflict the spec anticipated,
+between the necessarily-abstract base test case and the prohibition on abstract classes, does
+not arise. It also means the largest body of code in the project is covered by the analyser and
+not by the architecture rules, which is a gap this effort states rather than closes.
+
 One reservation is recorded in advance, because it is the rule most likely to be regretted.
 The prohibition on protected methods conflicts with the framework's design rather than with
 this code: framework extension points are protected by convention, so each override must be
@@ -431,6 +472,36 @@ Three verification points are added, all *inside* that seam rather than beside i
    namespaces, and a route file declares neither. The framework's own route registry is the
    highest available point for this property, and a single assertion there covers every route
    present and future.
+
+   The registry holds more than this repository declares, and that was measured rather than
+   assumed: of the thirteen routes registered under test, six are closures and every one of
+   them belongs to a dependency — the framework's health endpoint and its two local-storage
+   routes, and three of Livewire's asset routes. The one route this repository declares is not
+   among them, because `Route::view` registers a framework controller rather than a closure —
+   so the assertion passes today on merit and not by accident. None of the six can be rewritten
+   here, so the assertion resolves each
+   closure to its declaring file and reports only those outside `vendor`. The filter is the
+   tree rather than the route file, which is what makes it hold for a route file that does not
+   exist yet; a closure whose origin cannot be resolved is reported rather than skipped. The
+   assertion was verified to fail — a closure route added to `routes/web.php` is named in the
+   failure by its URI, and the file was then restored.
+
+   What that scoping gives up is stated rather than glossed. The assertion says "no closure
+   declared outside `vendor`", which is narrower than "no route action is a closure": a route
+   file here could bind a closure that a dependency constructed, and it would pass. The
+   narrowing is forced — six vendor closures are registered and none of them is rewritable —
+   and reaching the residual hole takes a deliberate act rather than the inattention the rule
+   exists to catch.
+
+   **The rule targets web routes only, and the shipped console closure stays a closure.** That
+   is the decision, and the reasoning is that the alternative buys nothing mechanical.
+   Artisan commands are not in the route registry at all, so no assertion at this seam can see
+   them; rewriting the shipped `inspire` command as a class would remove today's instance
+   without preventing tomorrow's, since nothing in the chain would then forbid the next console
+   closure either. The gap is therefore stated rather than closed: logic placed in
+   `routes/console.php` is outside the measured perimeter and outside this assertion, and
+   closing it would need a second assertion against the console registry — a deliberate
+   addition for a human to make, not one to take in passing on a ticket that named web routes.
 3. **A forbidden-annotation check.** A script rather than a test, because no tool in the chain
    watches for the two ignore annotations and, without it, the prohibition is only an intention.
 
@@ -565,7 +636,8 @@ framework code, which cannot be known before installation.
 Seven further unknowns are deliberately left to implementation rather than guessed, and each is
 a thing to *observe* rather than assume. Whether the architecture rules reach the test
 namespace, which would put the necessarily-abstract base test case in conflict with the
-prohibition on abstract classes. The mutation threshold, which is set from a measurement.
+prohibition on abstract classes — observed, and answered above: they do not, and the conflict
+never arises. The mutation threshold, which is set from a measurement.
 The reconciliation between Prettier's indentation setting and the editor
 configuration, which must be checked file by file. The robustness of the template plugin beyond
 the two files it was tried on — neither candidate is a first-party project, and this class of
