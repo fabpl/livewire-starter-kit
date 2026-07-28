@@ -540,6 +540,41 @@ registers a password-defaults closure whose production branch never runs in the 
 environment, and which is only invoked at all when a password validation occurs; reaching it
 means deliberately simulating production. Full coverage is cheap here, but it is not free.
 
+Measured at implementation, both costs were real and the first was named too narrowly. The
+model was not one uncovered branch but nothing at all: eleven of the application's twenty-eight
+measured elements were covered beforehand, and none of the model's were — `initials()` and
+`casts()` alike — because no shipped test ever constructs a user. The closure behaved exactly
+as read: its production branch was the only uncovered region of the provider, and the existing
+suite never invoked the closure at all. Four tests in two files close both gaps, taking the
+measurement from 39.1 per cent to a hundred with no suppression, no lowered threshold and no
+widened perimeter. The estimate was of the wrong shape rather than the wrong size, for the
+second time in this effort.
+
+Reaching the production branch costs one thing worth recording. The rule that branch builds
+ends in `uncompromised()`, which queries an external service, and a gate that calls the network
+is a gate that goes red for reasons unrelated to the code. The test never reaches that call,
+because the rule's own length check fails first and it returns before verifying. The
+short-circuit is what keeps the network out of the gate, and it holds only while the password
+the test offers is shorter than the twelve characters production demands. That is stated rather
+than guarded, since guarding it would mean asserting how the rule works instead of what it
+accepts.
+
+The first attempt to establish this was itself unsound, and it is recorded because the failure
+is instructive about what counts as a measurement here. Forbidding stray requests and observing
+the test still pass proves nothing: the framework's verifier wraps its request in a `try` and
+reports the exception, so a blocked request is swallowed and the validation continues as though
+the password were uncompromised. A probe whose negative result is indistinguishable from
+success is not evidence. Faking the client and asserting nothing was sent is, and it was
+confirmed to discriminate rather than merely to pass — the same probe on a password long enough
+to survive the length check records a request to the external service.
+
+The command gains its first prerequisite beyond an install: the threshold cannot be evaluated
+without a coverage driver. The pipeline installs pcov, and a local machine running Xdebug needs
+its coverage mode switched on. A run that reports coverage could not be obtained is the one
+failure in this chain that says nothing about the code, so the quality-gate skill names it as
+such — an agent that met it without that note would have a lowered threshold within reach and
+no reason not to reach for it.
+
 ### Mutation
 
 Configured and available as its own command, deliberately **outside** the blocking gate.
@@ -642,7 +677,8 @@ The reconciliation between Prettier's indentation setting and the editor
 configuration, which must be checked file by file. The robustness of the template plugin beyond
 the two files it was tried on — neither candidate is a first-party project, and this class of
 tool has a deserved reputation for breaking on unusual directives. And the size of the coverage
-step, the only one that is writing work rather than configuration.
+step, the only one that is writing work rather than configuration — measured, and answered
+above: four tests in two files, from a starting point of 39.1 per cent.
 
 The last two belong to the browser suite and were not measured because nothing was installed.
 Whether the browser plugin's own dependency resolution is compatible with the single point at

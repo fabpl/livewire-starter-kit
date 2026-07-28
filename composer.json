@@ -97,7 +97,7 @@
             "@format:check",
             "@refactor:check",
             "@types:check",
-            "@php vendor/bin/pest"
+            "@php vendor/bin/pest --coverage --min=100"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

@@ -11,13 +11,21 @@ This repository holds every change to one command:
 composer test
 ```
 
-It clears configuration, then runs Pint, Prettier, Rector, Larastan, the forbidden-annotation
-check, the test suite and the coverage threshold. Continuous integration runs
-`composer ci:check`, which is this same command and nothing else — so a green run here and a
-green pipeline cannot diverge.
+It clears configuration, then runs the forbidden-annotation check, Pint, Prettier, Rector and
+Larastan, and finishes with the test suite and its coverage threshold. Continuous integration
+runs `composer ci:check`, which is this same command and nothing else — so a green run here
+and a green pipeline cannot diverge.
 
 **Work is not done until this command exits zero.** Not "done apart from formatting", not
 "done, tests to follow". Report work as complete only after a clean run.
+
+The one prerequisite beyond an install is a coverage driver, without which the threshold cannot
+be evaluated at all. The pipeline installs pcov; a local machine running Xdebug needs its
+coverage mode switched on — `XDEBUG_MODE=coverage composer test`, or `xdebug.mode=coverage` in
+`php.ini`. Pest reporting that coverage could not be obtained is that prerequisite missing
+rather than a check failing, and it is the only message in this chain that says nothing about
+the code. It is not an exception to the rule above: enable the driver and run the command
+again, because a run that could not measure coverage has not been run.
 
 ## When to run it
 
