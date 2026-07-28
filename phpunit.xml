@@ -11,6 +11,16 @@
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
         </testsuite>
+        <!--
+            Its own suite so that the run measuring coverage can leave it out by name. A line a
+            browser scenario walked past is indistinguishable from a line a test asserts, so
+            counting browser traversal would make the hundred per cent minimum satisfiable by
+            driving pages. The `test` script names Unit and Feature; nothing runs this one but
+            the `browser:test` script.
+        -->
+        <testsuite name="Browser">
+            <directory>tests/Browser</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>

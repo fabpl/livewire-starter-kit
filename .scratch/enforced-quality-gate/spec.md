@@ -661,6 +661,43 @@ so counting browser traversal would let the hundred per cent minimum be satisfie
 pages — ticket 09's requirement reduced to a formality. The exclusion is mechanical: the browser
 tests live in their own suite and the run that measures coverage does not execute it.
 
+Measured at implementation, the exclusion is load-bearing rather than notional. The scenarios
+live in a third `Browser` suite and the gate's test step names `Unit` and `Feature` explicitly;
+the same runner invoked without those names collects twelve tests instead of eleven, so the
+naming is what does the work and not a coincidence of layout. The gate's own numbers are
+unchanged by the addition — eleven tests, sixty-eight assertions, a hundred per cent — which is
+the statement that no browser scenario reached the measurement.
+
+The mutation command needs the same names for the same reason, and this was found on integrating
+the two commands rather than anticipated. Mutation reads its perimeter from the coverage
+`<source>` and selects mutants with `--covered-only`, so a suite it runs is a suite that can
+qualify a line as a mutation target — the substitution the paragraph above forbids, arriving
+through the instrument beside the gate instead of through the gate. Measured on this tree the
+names change nothing: twenty-five mutants and 72.00 per cent with them and without them, since
+every application line is already covered by the unit and feature suites and the browser scenario
+qualifies none that was not qualified already. They are there for the tree that has a line only a
+browser reaches.
+
+What the console assertion actually sees was probed rather than assumed, and it is narrower than
+the sentence above implies. The plugin captures the console by replacing `console.log` on the
+page and by listening for the window's `error` event. A `console.log` and an uncaught exception
+are therefore caught; `console.error`, `console.warn`, and a failed resource load — a stylesheet
+or a script the build did not emit, requested and answered with a 404 — are **not**. All five
+were probed against the running page, each by adding the defect to the view and observing the
+suite, and each probe was checked to discriminate rather than merely to pass.
+
+That costs the third item in the list of defects this suite was meant to close: a script that
+throws is caught, an asset that is missing is not. It is recorded rather than repaired, because
+the repair would mean writing a second console capture alongside the plugin's — a fixer beside
+the owner of the concern, which is the arrangement the ownership rule exists to prevent. The
+plugin does own one slice of it, `assertNoBrokenImages`, and that slice is empty here: the
+shipped view declares no `img` element, so the assertion would pass on a page with no images to
+break and report a guarantee it never exercised. It is left out for that reason rather than
+overlooked, and it is the assertion to reach for first when the application gains an image. The
+honest scope of the suite today is the executing page, not the manifest behind it. If the
+application grows an interface whose assets can plausibly go missing, this is the second decision
+to revisit after the one below.
+
 Keeping it out of the aggregate command is the maintainer's decision, taken against the
 recommendation in this document, and both sides of it are recorded. Against: the chain's own
 argument, that an instrument nothing triggers will one day fail for reasons nobody tracked — the
@@ -721,12 +758,24 @@ tool has a deserved reputation for breaking on unusual directives. And the size 
 step, the only one that is writing work rather than configuration — measured, and answered
 above: four tests in two files, from a starting point of 39.1 per cent.
 
-The last two belong to the browser suite and were not measured because nothing was installed.
+The last two belonged to the browser suite and could not be measured until something was
+installed. Both are now answered, and one of the answers is not the one the question expected.
+
 Whether the browser plugin's own dependency resolution is compatible with the single point at
 which Pest, PHPUnit and `laravel/pao` already meet — the migration ticket found that point to be
-exact rather than roomy. And whether a browser scenario needs built frontend assets present,
-which would make the command's prerequisites larger than a binary download and is the kind of
-thing that turns "run this command" into "run these four".
+exact rather than roomy. It is: the plugin resolved and installed against the existing lock
+without moving any of the three, and the gate stayed green immediately afterwards. The
+point turned out to be roomier than the migration ticket's experience suggested.
+
+And whether a browser scenario needs built frontend assets present, which would make the
+command's prerequisites larger than a binary download and turn "run this command" into "run
+these four". Strictly it does not — the shipped view falls back to an inlined stylesheet when no
+build manifest exists, so the suite passes on an unbuilt tree. That pass is worth less than it
+looks: on an unbuilt tree the `@vite` directive never runs, the application's script is never
+requested, and the scenarios exercise a fallback branch rather than the page a user would get.
+The command therefore builds the assets itself before running, which costs about a second and
+keeps the prerequisite at one download. The question's premise held even though its answer
+was no.
 
 Four decisions reversed themselves, and all four corrections are recorded in place rather than
 quietly applied. The route-closure rule was first specified as an architecture assertion and is

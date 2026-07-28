@@ -16,6 +16,9 @@
 # Database
 /database/*.sqlite*
 
+# Browser suite output
+/tests/Browser/Screenshots
+
 # Framework runtime and caches
 /.phpstan.cache
 /.phpunit.cache
