@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Rector\CodeQuality\Rector\Equal\UseIdenticalOverEqualWithSameTypeRector;
 use Rector\CodingStyle\Rector\PostInc\PostIncDecToPreIncDecRector;
 use Rector\Config\RectorConfig;
+use Rector\PHPUnit\CodeQuality\Rector\Class_\AddSeeTestAnnotationRector;
 use Rector\TypeDeclaration\Rector\StmtsAwareInterface\DeclareStrictTypesRector;
 use Rector\TypeDeclaration\Rector\StmtsAwareInterface\SafeDeclareStrictTypesRector;
 use RectorLaravel\Set\LaravelSetProvider;
@@ -19,6 +20,12 @@ return RectorConfig::configure()
         __DIR__.'/public',
         __DIR__.'/routes',
         __DIR__.'/tests',
+
+        /*
+         * @note This file. It is the newest PHP in the tree and was reaching only Pint, which
+         * made the tool that rewrites everything the one thing it did not rewrite.
+         */
+        __FILE__,
     ])
 
     /*
@@ -86,11 +93,21 @@ return RectorConfig::configure()
          * weaker of the two anywhere Pint had not yet run.
          */
         UseIdenticalOverEqualWithSameTypeRector::class,
+
+        /*
+         * @note Docblocks belong to Pint, and this rule writes them: it stamps a `@see` on
+         * every class pointing at its test. The recommended set carries it in past the
+         * docblock-type group being off, so it needs naming here or Rector becomes a second
+         * docblock writer — the oscillation the ownership rule exists to prevent. Dormant
+         * today only because the functional test style leaves no test classes for it to pair
+         * a class with.
+         */
+        AddSeeTestAnnotationRector::class,
     ])
 
     /*
-     * @note Rector caches under the system temporary directory by default, where every
-     * checkout on the machine shares one directory. This path is relative to this file, so
-     * each checkout gets its own — the same reasoning as phpstan.neon's `tmpDir`.
+     * @note Each checkout gets its own cache directory rather than sharing one under the
+     * system temporary directory. The reasoning is stated once, next to phpstan.neon's
+     * `tmpDir`.
      */
     ->withCache(__DIR__.'/.rector.cache');
