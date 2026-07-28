@@ -37,6 +37,22 @@ Never report a task complete on the strength of a partial run. `composer test` i
 increasing cost, so an early failure means the expensive checks never executed — a Pint
 failure tells you nothing about coverage.
 
+## The instrument beside the gate
+
+```
+composer mutate
+```
+
+**Not** part of `composer test`, and the pipeline never runs it. It mutates the application
+code and reports how much of it the suite notices — the question coverage cannot answer, since
+a line can be traversed by a test that asserts nothing about it. It carries its own minimum and
+needs the same coverage driver `composer test` does.
+
+Run it after writing tests, when you want to know whether they assert anything. A failure here
+is not a broken gate: it is the instrument reporting that the suite executes code it does not
+check, and the repair is the missing assertion. Everything the Forbidden list below rules out
+applies to this command exactly as it applies to the gate.
+
 ## Repairing a failure
 
 ### Allowed
@@ -91,7 +107,8 @@ unlike prose it executes:
 | Formatting rules | `pint.json` |
 | Structural rewrites | `rector.php` |
 | Static analysis level, paths, extensions | `phpstan.neon` |
-| Coverage perimeter | `phpunit.xml`, `<source>` |
+| Coverage and mutation perimeter | `phpunit.xml`, `<source>` |
+| Mutation minimum | `composer.json`, the `mutate` script |
 | Architecture expectations | `tests/Feature/ArchitectureTest.php` |
 | Closures forbidden as route actions | `tests/Feature/RoutingTest.php` |
 | Frontend formatting and its boundary | `.prettierrc`, `.prettierignore` |

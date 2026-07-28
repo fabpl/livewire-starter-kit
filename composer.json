@@ -99,6 +99,11 @@
             "@types:check",
             "@php vendor/bin/pest --coverage --min=100"
         ],
+        "mutate": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php artisan config:clear --ansi",
+            "@php vendor/bin/pest --mutate --everything --covered-only --parallel --min=72"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

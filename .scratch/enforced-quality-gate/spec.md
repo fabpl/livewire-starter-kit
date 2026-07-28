@@ -598,6 +598,45 @@ gate. A scheduled job was rejected because a red that nobody reads erodes the cr
 the gates that do matter, and this repository has neither a remote nor an audience for such a
 notification.
 
+The command is `composer mutate`, and it states no perimeter of its own. Pest reads the paths
+to mutate from `phpunit.xml`'s `<source>` when the command line names none, so the mutated
+perimeter is the measured perimeter by construction rather than by a second declaration free to
+disagree with the first. What the command does say is `--everything`, which is not a widening:
+it means "filter by no class list", and it is the flag that replaces the `covers()` annotations
+this repository does not write.
+
+**Measured on 28 July 2026: 72.00 per cent, on 25 mutants across the two application files.**
+Seven escape. The minimum is pinned at that measurement — `--min=72` — and it was verified to
+discriminate rather than merely to pass: at `--min=73` the command exits one, at `--min=72` it
+exits zero. Parallel and serial runs agree on the score exactly, so the number is a measurement
+and not a sample.
+
+`--covered-only` turns out to be load-bearing, and the reason is not the one it would be in a
+project without full coverage. At a hundred per cent line coverage it ought to exclude nothing,
+and it excludes five mutants — three on line 27 and two on line 28 of the model, which are the
+`#[Fillable]` and `#[Hidden]` attributes. An attribute is not an executable statement, so no
+coverage driver ever records it as traversed, and the mutator nonetheless generates mutants
+there. Without the flag the same suite measures 60.00 per cent on 30 mutants, and the twelve
+points of difference are entirely those five.
+
+That is stated rather than glossed, because the flag is doing something narrower than "restrict
+to what the tests reach". Those five mutants are killable — removing an item from the
+mass-assignment list is a behaviour change a test could detect — and the flag hides them behind
+a property of the coverage format rather than a property of the tests. The instrument is
+therefore blind to attribute arguments, which is the cost of taking the perimeter from the
+coverage report; the alternative is a score dragged down by mutants no driver can ever mark
+covered, which would make the minimum uninterpretable. Reaching those five takes a deliberate
+run without the flag, not a different configuration.
+
+The seven escaping mutants are recorded rather than repaired, because raising the score is
+writing tests and this is a configuration step. Two are in the model's `initials()` — the
+`true` argument to `Str::initials` and the `> 1` in the ternary — which is precisely the branch
+the coverage step could only hold by convention, now held by an instrument that names it. Three
+more are the model's `casts()` array, whose contents no assertion inspects. The last two remove
+service-provider calls, `Date::use(…)` and `DB::prohibitDestructiveCommands(…)`, which the suite
+boots and never observes the effect of. Every one is a real gap in the assertions rather than a
+false positive, which is the instrument working.
+
 ### Browser scenarios
 
 Configured and available as its own command, deliberately **outside** the blocking gate, on the
@@ -672,7 +711,9 @@ Seven further unknowns are deliberately left to implementation rather than guess
 a thing to *observe* rather than assume. Whether the architecture rules reach the test
 namespace, which would put the necessarily-abstract base test case in conflict with the
 prohibition on abstract classes — observed, and answered above: they do not, and the conflict
-never arises. The mutation threshold, which is set from a measurement.
+never arises. The mutation threshold, which is set from a measurement — measured, and answered
+above: 72 per cent, and the measurement turned up a second thing nobody had asked about, which
+is that a hundred per cent line coverage does not make `--covered-only` a no-op.
 The reconciliation between Prettier's indentation setting and the editor
 configuration, which must be checked file by file. The robustness of the template plugin beyond
 the two files it was tried on — neither candidate is a first-party project, and this class of
