@@ -19,6 +19,7 @@
 # Framework runtime and caches
 /.phpstan.cache
 /.phpunit.cache
+/.rector.cache
 .phpunit.result.cache
 /storage/*.key
 /storage/pail

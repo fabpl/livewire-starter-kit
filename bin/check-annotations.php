@@ -35,8 +35,10 @@ $scanned = 0;
 
 foreach ($files as $file) {
     $path = $root.DIRECTORY_SEPARATOR.$file;
-
-    if ($path === __FILE__ || ! is_file($path)) {
+    if ($path === __FILE__) {
+        continue;
+    }
+    if (! is_file($path)) {
         continue;
     }
 

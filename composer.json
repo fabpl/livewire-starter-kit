@@ -18,6 +18,7 @@
         "livewire/livewire": "^4.1"
     },
     "require-dev": {
+        "driftingly/rector-laravel": "^2.5",
         "fakerphp/faker": "^1.24",
         "larastan/larastan": "^3.9",
         "laravel/pail": "^1.2.5",
@@ -26,7 +27,8 @@
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.9.3",
         "pestphp/pest": "^4.7",
-        "pestphp/pest-plugin-laravel": "^4.1"
+        "pestphp/pest-plugin-laravel": "^4.1",
+        "rector/rector": "^2.5"
     },
     "autoload": {
         "psr-4": {
@@ -53,6 +55,12 @@
             "Composer\\Config::disableProcessTimeout",
             "@php artisan dev"
         ],
+        "refactor": [
+            "rector process"
+        ],
+        "refactor:check": [
+            "rector process --dry-run"
+        ],
         "lint": [
             "pint --parallel"
         ],
@@ -66,6 +74,7 @@
             "npm run format:check"
         ],
         "fix": [
+            "@refactor",
             "@lint",
             "@format"
         ],
@@ -83,6 +92,7 @@
             "@php artisan config:clear --ansi",
             "@lint:check",
             "@format:check",
+            "@refactor:check",
             "@types:check",
             "@annotations:check",
             "@php vendor/bin/pest"
