@@ -216,16 +216,33 @@ errors, so the raise itself is free today.
 Two official extensions — phpstan-strict-rules and phpstan-deprecation-rules — are added
 because they live *beyond* the maximum level and no level
 contains them — they are the part that bites. The analysed perimeter widens to tests, the
-public entry point and the whole bootstrap directory; measured cost is one error, in an
-example test this effort deletes anyway.
+public entry point and the whole bootstrap directory; the cost estimated in advance is one
+error, in an example test this effort deletes anyway. Both halves of that estimate turned out
+wrong, and the correction is recorded below rather than written over it, so that the estimate
+and what it actually cost stay legible against each other.
 
 No baseline. The project starts at zero errors so there would be nothing to record, and
 installing the mechanism would only give agents somewhere to file future failures.
 
-One cost in this spec is *not* measured, and it is flagged rather than buried: the noise
-phpstan-strict-rules produces on idiomatic Laravel code could not be evaluated before
+One cost in this spec was *not* measured in advance, and it is flagged rather than buried: the
+noise phpstan-strict-rules produces on idiomatic Laravel code could not be evaluated before
 installation. If the result is unreasonable, phpstan-strict-rules is removed and the removal
 recorded — never kept with its findings suppressed.
+
+Measured at installation, that noise is negligible and the extension is kept. The whole raise —
+level 7 to the maximum, both extensions, the widened perimeter — reports five errors. Three are
+the same finding in kit-shipped configuration: an `array_filter` called without a callback, once
+in `config/app.php` and twice in `config/database.php`. All three take Laravel's own `filled(...)`
+as the second argument, which states the intent the loose semantics only implied. The other two
+are the shipped feature test calling `$this->get()`, which the functional style replaces with the
+plugin's `get()` function — the closure Pest binds is not a method, so the analyser was right
+that the call had no receiver it could see. Nothing was suppressed and no signature widened.
+
+That last pair is where the advance estimate above was wrong twice over. Widening the perimeter
+cost two errors rather than one, both on the same line; and the example test was not deleted by
+the Pest migration, which rewrote it in place and carried the receiver across, so this effort
+had it to correct rather than gone. Neither miss changes a decision — the corrected cost is
+still trivial — but the estimate was of the wrong shape, not merely the wrong size.
 
 ### Test runner and style — Pest
 
