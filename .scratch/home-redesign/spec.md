@@ -1,6 +1,6 @@
 # Spec: Home redesign and design-system foundation
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 ## Problem Statement
 
@@ -450,6 +450,23 @@ This effort adds almost no mutable PHP: the Page has no body, and the variant ta
 outside the measured perimeter by design. The score may therefore move without anyone having
 decided to move it. Observe it, and if it moves, say so rather than adjusting the threshold —
 per the quality-gate skill, the bar is never weakened to make it pass.
+
+**Measured on 29 July 2026: 75.00 per cent over 28 mutants, 7 untested and 21 tested, and the
+pin moves from 72 to 75.** The prediction above was right about this effort and wrong about the
+cause. The home redesign contributed nothing: `Home` has no body, so `app/` gained a file and no
+mutant. The three additional mutants came from the *defaults* effort, which landed
+`Model::shouldBeStrict` and `URL::forceHttps` in `AppServiceProvider` after 72 was pinned, and
+each of the three is killed by the tests that effort wrote — 18 of 25 became 21 of 28. The seven
+that escape are the same seven ticket 10 listed and none of them is new: `Date::use` and
+`DB::prohibitDestructiveCommands` removed from `AppServiceProvider`, the `initials()` ternary's
+two, and three on `User::casts()`. Checked for discriminating power the way the original was:
+`--min=76` exits one, `--min=75` exits zero, and a serial run returns the same score and the same
+mutant count as the parallel one.
+
+The direction is what decides the pin, and it moved up, so raising it is holding the bar where
+the suite actually is rather than lowering anything. Worth naming for the next effort that reads
+this: the figure moved because a *different* effort's tests improved, which means a pinned score
+records the state of the whole perimeter and not the work of whoever last touched it.
 
 The two static tests are the first in this repository to treat the frontend source tree as an
 object of assertion. If a third such test appears, that is the moment to ask whether they want
