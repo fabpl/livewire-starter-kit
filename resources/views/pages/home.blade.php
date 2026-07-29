@@ -98,7 +98,13 @@ reads and the structure a reader navigating by landmark expects. --}}
                 <x-ui.card>
                     <h3 class="font-display text-base font-semibold text-balance">No suppression mechanism</h3>
 
-                    <p class="mt-3 font-serif text-sm text-pretty">Pint and Prettier format the whole tree and Rector refactors it, and the command fails when any of the three would change a file. Nothing is excused from the rest: no analyser baseline, no ignored errors, and a check in that same command rejects the annotations that would exempt a line from coverage or from mutation.</p>
+                    {{-- "The whole tree" was the first phrasing of this and review rejected it,
+                    which is the check the block asks for working. `.prettierignore` excludes
+                    markdown and the dependency manifests, and `rector.php` reaches neither
+                    `artisan` nor `resources/` — so a reader opening one file would have found the
+                    claim false, on the card whose subject is that nothing is exempt. Each fixer
+                    now names what it owns. --}}
+                    <p class="mt-3 font-serif text-sm text-pretty">Pint formats the PHP, Rector rewrites it and Prettier owns the templates and the stylesheet, all three inside the blocking command, which fails when any of them would change a file. There is no analyser baseline and no ignored error, and a check in that same command rejects the two annotations that would exempt a line from coverage or from mutation.</p>
                 </x-ui.card>
             </div>
         </section>

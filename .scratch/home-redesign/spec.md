@@ -441,15 +441,20 @@ rather than duplicated.
 - Screenshot comparison, a responsive matrix, and cross-browser testing.
 - Authentication, and any screen behind it.
 - A second Page, and the application shell a second Page would want.
-- Changing the coverage minimum, the mutation threshold, or any tool's configured strictness.
+- Changing the coverage minimum or any tool's configured strictness. The mutation threshold is
+  the one exception, and only in one direction: ticket 05 re-measures the score because this
+  effort changes the measured perimeter, and the pin follows a measurement upward. It is never
+  moved down to make a run pass.
 
 ## Further Notes
 
 The mutation threshold deserves a look during implementation rather than a prediction now.
 This effort adds almost no mutable PHP: the Page has no body, and the variant tables live
 outside the measured perimeter by design. The score may therefore move without anyone having
-decided to move it. Observe it, and if it moves, say so rather than adjusting the threshold —
-per the quality-gate skill, the bar is never weakened to make it pass.
+decided to move it. Observe it, and if it moves, say so — and if it moved *down*, say so and
+leave the pin alone, because per the quality-gate skill the bar is never weakened to make a run
+pass. A score that moved up is the opposite case: leaving the pin below a measurement is holding
+the bar under where the suite already is.
 
 **Measured on 29 July 2026: 75.00 per cent over 28 mutants, 7 untested and 21 tested, and the
 pin moves from 72 to 75.** The prediction above was right about this effort and wrong about the

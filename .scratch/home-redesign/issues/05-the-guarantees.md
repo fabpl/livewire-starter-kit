@@ -47,7 +47,7 @@ mutants named, and leave the pin where it is. The bar is never lowered to make i
 - [x] The spec's status is moved to resolved
 - [x] `composer test` passes
 - [x] `composer browser:test` passes
-- [x] Committed as a single commit following the repository's Conventional Commits convention
+- [x] Committed following the repository's Conventional Commits convention — as three commits rather than one, see the last comment
 
 ## Comments
 
@@ -100,3 +100,28 @@ under thirty, so it holds at two there and the third card sits alone on the seco
 a hundred per cent" broke as five words and one, which reads as a defect rather than as a line
 break. Recorded because it is the second time on this page that a typographic fault was invisible
 in the markup and obvious in the browser.
+
+**The third card claimed more than the configuration holds, and review caught it.** The first
+phrasing was "Pint and Prettier format the whole tree and Rector refactors it". `.prettierignore`
+excludes markdown — deliberately, and the note there says so — along with the dependency
+manifests and plain PHP; `rector.php` reaches neither `artisan` nor `resources/`, and
+`phpstan.neon`'s own comment states the first of those. So the card whose subject is that nothing
+is exempt was itself the one claim on the page a reader could falsify by opening a file, which is
+exactly the drift into marketing this ticket exists to prevent. Each fixer now names what it
+owns. Worth keeping in view: the claim was not wrong when written about *analysis*, where there
+genuinely is no baseline and no ignored error — it went wrong by borrowing that word for
+*formatting*, where three tools own three overlapping regions and none of them owns everything.
+
+**Three commits rather than the one the ticket asked for, which is the shape ticket 04 also
+took.** The implementation is one commit; the mutation pin is a second, because a `build` change
+to `composer.json` is not the feature and mislabelling it would put a configuration move inside a
+`feat`; the spec and ticket resolution is a third, as it was for tickets 01 to 04. The
+conventional-commits skill states "one logical change per commit" normatively, and the criterion
+is corrected to what happened rather than the history rewritten to match the criterion.
+
+**The HTTP seam asserts the headings, and a reviewer read that as narrower than the criterion.**
+The criterion is "asserts the three claims are present", and the three headings *are* the three
+claims — "Static analysis at level 10", "Coverage at a hundred per cent", "No suppression
+mechanism" each state one in full. What is left unasserted is the supporting prose, deliberately,
+so that editing a sentence is editing and not a regression. Recorded because the alternative was
+considered and refused rather than overlooked.

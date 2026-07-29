@@ -26,7 +26,14 @@ by Tailwind's name and the scale is offset by one step from the theme's.
 
 The consumer convention is the button's, and it is the same convention for the same reason:
 Laravel's attribute merge concatenates, so the class attribute of a Primitive carries positioning
-and spacing utilities only. What must vary is a variant, and this Primitive has none to add to. --}}
+and spacing utilities only. What must vary is a variant, and this Primitive has none to add to.
+
+The block below holds a constant that is used once, which the button needs for its `match` and
+this does not — so it is worth saying why it is here rather than inlined into the call. Passed
+inline, Prettier breaks the argument across four lines and leaves the class list indented inside
+a wrapped method call, which is harder to read than the string on its own and diffs badly on
+every future change to it. Naming it is what keeps the markup one line, and it is the shape the
+next Primitive will copy. --}}
 
 @php
     $classes = 'rounded-lg border border-border bg-card p-6 text-card-foreground shadow-sm';
