@@ -13,9 +13,10 @@
     {{-- Applies the theme class before the first paint. A deferred module paints first, so an
     inline script in the head is the only way to avoid a flash of the wrong theme. It reads the
     stored preference, falls back to the media query, and sets a class — and it is forbidden from
-    growing beyond those three steps. Nothing writes the stored preference yet; the control that
-    does arrives with the theme switch, and this script is written whole now so that the switch
-    has somewhere to write to. --}}
+    growing beyond those three steps. What writes that preference is
+    `resources/views/components/chrome/theme-control.blade.php`, which stores one of the same
+    three words it shows; anything that is neither `light` nor `dark` falls through to the media
+    query here, which is how the system state resolves. --}}
     <script>
         (function () {
             var stored = localStorage.getItem('theme');

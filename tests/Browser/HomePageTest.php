@@ -50,3 +50,85 @@ it('confirms visibly that the installation command was copied', function (): voi
         ->click('Copy')
         ->assertSee('Copied');
 });
+
+/* @note The theme switch is the one piece of hand-written JavaScript in this tree, so the three
+   tests below observe it end to end rather than trusting it. What is asserted is the class on the
+   document element, because that is the whole of what the switch is for: the stylesheet's dark
+   scope hangs off it, and a control that stored a preference without moving that class would be
+   a switch that switches nothing. */
+
+/*
+ * @note Every visit here emulates a dark operating system, and that is what gives the sequence
+ * its teeth rather than being a detail of setup. Under a light one, "light", "dark" and "system"
+ * would produce the same page for two of the three states, and an assertion that cannot tell two
+ * states apart is not observing a three-state control.
+ *
+ * The order is chosen so that every assertion follows a *change*. The page loads dark, so light
+ * is asserted after a transition into it, dark after a transition back, and light again before
+ * system — which means the final assertion distinguishes system from the light it was just in,
+ * rather than agreeing with a state the page was already in. No step here can pass by accident of
+ * the initial condition.
+ */
+it('applies each of its three theme states', function (): void {
+    visit(route('home'))
+        ->inDarkMode()
+        ->click('Light')
+        ->assertScript("document.documentElement.classList.contains('dark')", false)
+        ->click('Dark')
+        ->assertScript("document.documentElement.classList.contains('dark')")
+        ->click('Light')
+        ->assertScript("document.documentElement.classList.contains('dark')", false)
+        ->click('System')
+        ->assertScript("document.documentElement.classList.contains('dark')");
+});
+
+/*
+ * @note Persistence, and the seam it is observed at is the reload rather than local storage.
+ * Asserting the stored value would be the implementation restated; asserting that a dark system
+ * still serves a light page proves the whole chain — the control wrote, the head script read, and
+ * it applied the choice before the first paint rather than the operating system's preference.
+ *
+ * The pressed state is asserted after the reload for the second half of that chain: the control
+ * has to come back up showing the choice it is honouring, or a reader is told the page is
+ * following their system while it is not.
+ */
+it('remembers the reader\'s choice across a reload', function (): void {
+    visit(route('home'))
+        ->inDarkMode()
+        ->click('Light')
+        ->refresh()
+        ->assertScript("document.documentElement.classList.contains('dark')", false)
+        ->assertAriaAttribute('Light', 'pressed', 'true');
+});
+
+/*
+ * @note The listener, which is the part of the system state that sampling the media query once at
+ * load would not give: a reader whose operating system switches at dusk has to be followed there.
+ *
+ * The event is dispatched by the test, and that is a limitation of the harness rather than a
+ * choice. Playwright can emulate a colour scheme when a browser context is created and this
+ * plugin exposes that as `inDarkMode`, but neither exposes a way to change it afterwards, so the
+ * arrival of the event is the one thing here that is staged. Everything it exercises is real:
+ * the media query list is the component's own, reached through Alpine's public `$data` accessor
+ * and the control's accessible name, and `matches` reports the genuinely emulated preference.
+ *
+ * Stripping the class first is what makes the assertion mean something. It puts the page in the
+ * position it would be in a moment before a system that was light turns dark; without it the
+ * class is already correct and a listener that was never registered would pass. The class is then
+ * restored by the code under test or not at all.
+ */
+it('keeps following the operating system while its system state is active', function (): void {
+    $page = visit(route('home'))
+        ->inDarkMode()
+        ->click('System');
+
+    $page->script(<<<'JS'
+        document.documentElement.classList.remove('dark')
+        JS);
+
+    $page->script(<<<'JS'
+        Alpine.$data(document.querySelector('[aria-label="Colour theme"]')).query.dispatchEvent(new Event('change'))
+        JS);
+
+    $page->assertScript("document.documentElement.classList.contains('dark')");
+});
