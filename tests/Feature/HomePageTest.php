@@ -60,3 +60,21 @@ it('offers the theme in three states, system among them', function (): void {
         ->assertSee('Dark')
         ->assertSee('System');
 });
+
+/*
+ * @note The three guarantees, asserted by their headings rather than by their prose. A heading is
+ * the claim in its shortest form, so a card that goes takes one of these with it, while rewriting
+ * the paragraph under it — which is editing, not regression — leaves the suite alone.
+ *
+ * What is deliberately *not* asserted is the figures the cards quote. The mutation score lives in
+ * `composer.json` and the coverage minimum beside it; pinning either here would make this the
+ * third place holding one number, and the class of test that restates a configuration so the two
+ * can drift is the one this repository refused. That the quoted figure matches the configuration
+ * is a review obligation, checkable by opening the file, and it is stated in the ticket as one.
+ */
+it('states the three guarantees the gate makes', function (): void {
+    get('/')
+        ->assertSee('Static analysis at level 10')
+        ->assertSee('Coverage at a hundred per cent')
+        ->assertSee('No suppression mechanism');
+});

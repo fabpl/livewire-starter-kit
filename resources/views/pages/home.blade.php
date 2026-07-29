@@ -44,6 +44,64 @@ reads and the structure a reader navigating by landmark expects. --}}
                 <x-ui.button variant="secondary" href="https://github.com/fabpl/livewire-starter-kit">Read the source</x-ui.button>
             </div>
         </section>
+
+        {{-- The guarantees, and the block that makes this page true: it is where the repository
+        stops describing a framework and starts describing itself. Every claim below is checkable
+        by opening a file in this tree — `phpstan.neon` for the level and the two rule sets,
+        `composer.json` for the two minimums, `bin/check-annotations.php` for the last — and a
+        claim that stops being true when a configuration changes is a claim that should fail
+        review.
+
+        Three cards and no more, because three is what the gate actually guarantees in categories
+        a reader can hold apart: what the analyser reads, what the tests are held to, and what
+        nothing is exempt from. A fourth would be one of these three restated.
+
+        The bodies are set in the reading face, which makes this the second and last place on the
+        page that opts into it. The headings stay in the display face and the interface face is
+        still the document default, which is what keeps the design document's prohibition on dense
+        chrome in the reading face impossible to break by accident.
+
+        The section is labelled by its own heading rather than carrying an `aria-label`, so the
+        landmark announces the words on the screen instead of a second phrasing only a screen
+        reader hears. Heading order is h1, h2, h3 with nothing skipped — the accessibility audit
+        in the browser suite reads it. --}}
+        <section class="mt-24 sm:mt-32" aria-labelledby="guarantees-heading">
+            <h2 id="guarantees-heading" class="font-display text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+                What the gate guarantees
+            </h2>
+
+            {{-- Medium-low density: a six-unit gutter between the cards and the same six inside
+            them, from the Primitive. The measure follows from the grid rather than from a width
+            set on the prose, and what three columns inside this shell leave is a column of a
+            little under forty characters. That is under the range long-form body text wants,
+            which is why each body is two sentences rather than a passage — a card is read in a
+            glance, and a paragraph that needed a wider measure would be a paragraph that did not
+            belong in a card.
+
+            Two columns before three, and the middle step is not decoration: at the tablet width
+            a third column would take that measure below thirty. The odd card sits alone on the
+            second row there, which is the honest cost of three items in a two-column grid and
+            cheaper than an unreadable line. --}}
+            <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <x-ui.card>
+                    <h3 class="font-display text-base font-semibold text-balance">Static analysis at level 10</h3>
+
+                    <p class="mt-3 font-serif text-sm text-pretty">PHPStan reads the application, its configuration, its routes and its own tests at level 10. Two rule sets sit beyond the levels altogether, so raising the level alone would never bring them in: the strict set rejects loose constructs the language still permits, and the deprecation set fails on framework API already scheduled for removal.</p>
+                </x-ui.card>
+
+                <x-ui.card>
+                    <h3 class="font-display text-base font-semibold text-balance">Coverage at a hundred per cent</h3>
+
+                    <p class="mt-3 font-serif text-sm text-pretty">The blocking command fails below full line coverage. A covered line is one that ran rather than one that was tested, so a second command mutates the code and reports how much of it the suite notices — 75 per cent today, and it fails under that.</p>
+                </x-ui.card>
+
+                <x-ui.card>
+                    <h3 class="font-display text-base font-semibold text-balance">No suppression mechanism</h3>
+
+                    <p class="mt-3 font-serif text-sm text-pretty">Pint and Prettier format the whole tree and Rector refactors it, and the command fails when any of the three would change a file. Nothing is excused from the rest: no analyser baseline, no ignored errors, and a check in that same command rejects the annotations that would exempt a line from coverage or from mutation.</p>
+                </x-ui.card>
+            </div>
+        </section>
     </main>
 
     <x-chrome.footer />
