@@ -14,16 +14,18 @@ link would lead to the page the reader is already on — the same decorative lie
 action exist to avoid. It becomes a link the day there is a second Page.
 
 Nothing here is `sticky`. A bar pinned over a page this short takes vertical space from the
-content for no navigation it enables. --}}
+content for no navigation it enables.
+
+The theme control is not here, and `spec.md` originally put it here. It sits in the footer
+instead, on the maintainer's call: three segments carrying the widest labels in the bar was the
+loudest thing on a bar whose whole brief is to be quiet, and a preference a reader sets once does
+not need to be the second thing they meet. What that leaves at the top is the kit's name and the
+one link a reader might want before scrolling. --}}
 
 <header class="border-b border-border">
     <div class="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-6 py-3">
         <p class="font-display text-base font-semibold text-foreground">livewire-starter-kit</p>
 
-        <div class="flex flex-wrap items-center">
-            <x-chrome.theme-control />
-
-            <x-ui.button variant="ghost" href="https://github.com/fabpl/livewire-starter-kit">GitHub</x-ui.button>
-        </div>
+        <x-ui.button variant="ghost" href="https://github.com/fabpl/livewire-starter-kit">GitHub</x-ui.button>
     </div>
 </header>
