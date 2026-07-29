@@ -64,6 +64,16 @@ Blaze folds primitives, and folds them well: when a variant is passed as a liter
 resolves at compile time and the abstraction costs nothing at runtime.
 
 The honest cost is that the gate no longer covers the tree uniformly. "All PHP in this
-repository is analysed" becomes "all PHP is analysed except under one named directory, whose
-contents are held by a different test" — a second rule to know, and a second thing that can
-be forgotten.
+repository is analysed" becomes "all PHP under `app/` is analysed, and none of the PHP under
+`resources/views/` is". The second half was already true of the layout and of a page's own
+view; what changes is that it now holds over a component layer, where it is load-bearing.
+
+Exactly one directory inside that region carries a second mechanism, and it is not the largest
+one. `resources/views/components/ui/` is guarded because it is the only place making a promise
+that can be broken silently: a primitive that reaches into the application still looks
+portable, and the day someone copies it into another project is the day they find out. A
+**chrome** component — one that belongs to this kit and is allowed to know the application —
+makes no such promise, so there is no rule for a test to hold and none is written. That is the
+shape of the exemption rather than a gap in it.
+
+What is left to know is a second rule, and a second thing that can be forgotten.

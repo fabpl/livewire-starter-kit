@@ -144,6 +144,8 @@ unlike prose it executes:
 | Browser scenarios | `tests/Browser/` |
 | Architecture expectations | `tests/Feature/ArchitectureTest.php` |
 | Closures forbidden as route actions | `tests/Feature/RoutingTest.php` |
+| Primitives forbidden from reaching the application | `tests/Feature/PrimitivePurityTest.php` |
+| Contrast thresholds over the declared Tokens | `tests/Feature/ContrastTest.php` |
 | Frontend formatting and its boundary | `.prettierrc`, `.prettierignore` |
 | Forbidden suppression annotations | `bin/check-annotations.php` |
 | The chain itself | `composer.json`, `scripts` |
