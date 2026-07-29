@@ -6,5 +6,5 @@ it('serves the home page to a browser without writing to its console', function 
     visit(route('home'))
         ->assertNoConsoleLogs()
         ->assertNoJavaScriptErrors()
-        ->assertSee("Let's get started");
+        ->assertSee('Livewire Starter Kit');
 });
