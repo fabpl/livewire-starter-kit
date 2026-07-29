@@ -22,5 +22,31 @@ it('serves the home page to a browser without console output, script errors or a
         ->assertNoConsoleLogs()
         ->assertNoJavaScriptErrors()
         ->assertNoAccessibilityIssues(level: 1)
-        ->assertSee('Livewire Starter Kit');
+        ->assertSee('cannot be quietly weakened');
+});
+
+/*
+ * @note The one behaviour on this page the blocking suite cannot see. The HTTP seam proves the
+ * control is rendered; only a browser has a clipboard and an Alpine runtime.
+ *
+ * The assertion is on the visible confirmation rather than on the clipboard's contents, and that
+ * is the honest target rather than the convenient one: a reader who was not told cannot know the
+ * write succeeded, so a green clipboard over a silent page would be a passing test on a broken
+ * control.
+ *
+ * The permission is granted to the context because Playwright's Chromium withholds it and a real
+ * Chrome does not — it grants `clipboard-write` to the focused document without prompting. Left
+ * at the default, `writeText` rejects with `NotAllowedError` and this test fails on a control
+ * that works everywhere a reader would meet it, so the grant removes a difference between the
+ * harness and the browser rather than relaxing anything about the page.
+ *
+ * Worth knowing before trusting the suite too far, and measured rather than assumed: when that
+ * rejection happens, neither `assertNoConsoleLogs` nor `assertNoJavaScriptErrors` sees it. An
+ * unhandled promise rejection reaches neither. This assertion on the confirmation is therefore
+ * the only thing standing between a broken copy control and a green suite.
+ */
+it('confirms visibly that the installation command was copied', function (): void {
+    visit(route('home'), ['permissions' => ['clipboard-write']])
+        ->click('Copy')
+        ->assertSee('Copied');
 });
