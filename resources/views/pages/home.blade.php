@@ -15,7 +15,7 @@ reads and the structure a reader navigating by landmark expects. --}}
         and the reason the interface face is the document default rather than merely the
         recommended one.
 
-        The measure is narrower than the shell. Chrome may run the full width; prose may not,
+        The measure is narrower than the full width. Chrome may run it; prose may not,
         because a line of body text that crosses a wide viewport stops being readable. --}}
         <section class="max-w-3xl">
             <h1 class="font-display text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
@@ -72,7 +72,7 @@ reads and the structure a reader navigating by landmark expects. --}}
 
             {{-- Medium-low density: a six-unit gutter between the cards and the same six inside
             them, from the Primitive. The measure follows from the grid rather than from a width
-            set on the prose, and what three columns inside this shell leave is a column of a
+            set on the prose, and what three columns at the full width leave is a column of a
             little under forty characters. That is under the range long-form body text wants,
             which is why each body is two sentences rather than a passage — a card is read in a
             glance, and a paragraph that needed a wider measure would be a paragraph that did not

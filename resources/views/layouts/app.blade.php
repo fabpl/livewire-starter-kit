@@ -40,7 +40,7 @@
 <body class="bg-background text-foreground">
     {{-- The document and nothing else: no header, no navigation, no footer. The repository has
     one page, so anything else placed here would be a conjecture about pages that do not exist —
-    and the first authenticated screen of a real project would want a different shell entirely.
+    and the first authenticated Page of a real project would want entirely different Chrome.
     This page's own chrome is composed by the Page. --}}
     {{ $slot }}
 </body>

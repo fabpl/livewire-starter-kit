@@ -1,6 +1,6 @@
 {{-- The bar, composed by the Page rather than placed in the layout. That is the whole reason
 the layout carries the document only: this composition wants a marketing bar and the first
-authenticated screen of a real project will want a different shell, so fusing either into the
+authenticated Page of a real project will want different Chrome, so fusing either into the
 global layout would force the first real consumer to unpick the kit's before using it.
 
 Chrome in the visual sense as well as the structural one. The design document is explicit that a
