@@ -147,13 +147,20 @@ themes in OKLCH, but the source of truth here is the design document, and a conv
 is one nobody can check by eye against the specification. Nothing is lost: Tailwind 4 mixes
 in `oklab` for opacity modifiers whatever notation the input uses.
 
-The declared set is exactly the theme's, neither widened nor narrowed. Chart and sidebar
-Tokens are declared although this effort renders neither chart nor sidebar — a Token
-vocabulary is fixed upstream rather than invented here, it costs only CSS, and splitting it
-would make the block undiffable against its source. Tokens the shadcn contract has and this
-theme does not — popover surfaces, several foreground and border variants — are **not**
-invented. The day a component needs a popover surface is the day its value gets decided
-against a real surface.
+The declared set is the shadcn contract in full. Chart, sidebar and popover Tokens are
+declared although this effort renders none of them — a Token vocabulary is fixed upstream
+rather than invented here, it costs only CSS, and splitting it would make the block
+undiffable against its source.
+
+An earlier draft of this section drew the line differently: it kept chart and sidebar but
+withheld popover, on the grounds that the day a component needs a popover surface is the day
+its value gets decided against a real one. That line did not survive contact with the
+implementation, because it is not a line — all three are equally unrendered, and the
+argument for declaring the first two is the argument for declaring the third. Declaring the
+contract whole is what makes the block diffable against its source and spares a consuming
+project inventing the names this one left out. Every surface in the contract carries a
+foreground; the chart Tokens carry none, because they colour marks rather than text, and
+that absence is the contract's own shape rather than an omission to repair.
 
 ### Colour values move where contrast requires it
 
@@ -427,7 +434,7 @@ rather than duplicated.
 - Any Primitive the composition does not render: no input, dialog, dropdown, table, sidebar or
   chart. Their Tokens exist; their components do not.
 - The button variants and sizes this composition does not render.
-- Tokens the shadcn contract declares and this theme does not value.
+- Tokens beyond the shadcn contract. The contract is declared whole; nothing is added to it.
 - A shared variant engine. One table per Primitive until a third one proves the shape.
 - A class-merging dependency for consumer overrides.
 - Translation files, and any second locale.

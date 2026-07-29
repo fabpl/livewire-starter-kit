@@ -3,7 +3,165 @@
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
+/* Dark is selected by a class on the document element. Tailwind's default binds the `dark`
+variant to `prefers-color-scheme` alone, which leaves no room for a reader who wants the
+opposite of what their system says; the head script in the layout resolves the stored
+preference and the media query into this one class before the first paint. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* The palette, as raw declarations. The set is the shadcn contract in full: popover, chart and
+sidebar tokens are all declared although nothing here renders a popover, a chart or a sidebar.
+The vocabulary is fixed upstream, it costs only stylesheet lines, and declaring a subset would
+make the block undiffable against its source while leaving a consuming project to invent the
+names this one left out. Every surface in the contract carries a foreground; the chart tokens
+carry none because they colour marks rather than text, which is the contract's own shape.
+Values keep the hexadecimal notation of the design document so the block stays checkable by eye.
+
+Where a pairing failed its threshold the value moved and carries a note, per ADR-0004. The
+mechanism that decides is `tests/Feature/ContrastTest.php`, not taste. */
+:root {
+    --background: #faf9f5;
+    --foreground: #3d3929;
+    --card: #faf9f5;
+    --card-foreground: #141413;
+    --popover: #ffffff;
+    --popover-foreground: #28261b;
+    --primary: #bc5836; /* moved from #c96442 — white on the published fill is 3.90:1, and white is already the maximum */
+    --primary-foreground: #ffffff;
+    --secondary: #e9e6dc;
+    --secondary-foreground: #535146;
+    --muted: #ede9de;
+    --muted-foreground: #696864; /* moved from #83827d — secondary text on the stage is 3.65:1 as published */
+    --accent: #e9e6dc;
+    --accent-foreground: #28261b;
+    --destructive: #141413;
+    --destructive-foreground: #ffffff;
+    --border: #dad9d4;
+    --input: #929086; /* moved from #b4b2a7 — the published control boundary is 2.02:1 against the stage */
+    --ring: #c96442;
+    --chart-1: #b05730;
+    --chart-2: #9c87f5;
+    --chart-3: #ded8c4;
+    --chart-4: #dbd3f0;
+    --chart-5: #b4552d;
+    --sidebar: #f5f4ee;
+    --sidebar-foreground: #3d3d3a;
+    --sidebar-primary: #b95634; /* moved from #c96442 — as primary: the published fill carries near-white at 3.77:1 */
+    --sidebar-primary-foreground: #fbfbfb;
+    --sidebar-accent: #e9e6dc;
+    --sidebar-accent-foreground: #343434;
+    --sidebar-border: #ebebeb;
+    --sidebar-ring: #8c8c8c; /* moved from #b5b5b5 — the published focus ring is 1.86:1 against the sidebar */
+
+    /* One root radius and the shadcn calculation chain reproduce the theme's five values
+    exactly, which keeps a single knob for retuning the whole scale. Tailwind's scale is offset
+    by one step from the theme's, so the accepted cost is that `rounded-md` no longer means what
+    Tailwind's documentation says it means — the design document prescribes control corners by
+    Tailwind's name, and this is what shadcn itself does. */
+    --radius: 0.5rem;
+}
+
+/* The dark scope declares only what it must, and "must" means two different things worth
+separating. A surface is declared because inheriting a light one would leave the dark theme not
+dark — that is why `--popover` appears here and is not a contrast question at all. A foreground
+inherits its light value and is derived explicitly only where the contrast test fails on the
+inherited pair; there the mechanism decides, not taste.
+
+Two outcomes are worth naming because they are a check that the rule was applied rather than
+guessed: `--ring` inherits unchanged and still clears 3:1 on both stages, while
+`--accent-foreground` had to be derived, since inherited it lands as a near-black on a
+near-black at 1.16:1. Nine tokens inherit in total. */
+.dark {
+    --background: #262624;
+    --foreground: #c3c0b6;
+    --card: #262624;
+    --card-foreground: #faf9f5;
+    --popover: #30302e;
+    --popover-foreground: #e5e5e2;
+    --primary: #b95a3b; /* moved from #d97757 — white on the published fill is 3.12:1, and white is already the maximum */
+    --secondary: #faf9f5;
+    --secondary-foreground: #30302e;
+    --muted: #1b1b19;
+    --muted-foreground: #b7b5a9;
+    --accent: #1a1915;
+    --accent-foreground: #f5f4ee; /* derived: the inherited light value is 1.16:1, near-black on near-black */
+    --destructive: #de3236; /* moved from #ef4444 — white on the published fill is 3.76:1 */
+    --border: #3e3e38;
+    --input: #717068; /* moved from #52514a — the published control boundary is 1.90:1 against the dark stage */
+    --chart-3: #1a1915;
+    --chart-4: #2f2b48;
+    --sidebar: #1f1e1d;
+    --sidebar-foreground: #c3c0b6;
+    --sidebar-primary: #343434;
+    --sidebar-accent: #0f0f0e;
+    --sidebar-accent-foreground: #c3c0b6;
+}
+
+/* The mapping onto Tailwind's own names. `inline` is load-bearing rather than stylistic, and
+what it does is worth stating precisely, because it was checked against the built stylesheet
+rather than taken on trust. With it, `bg-background` compiles to `var(--background)` — a
+reference to the raw token, so any scope that redefines that token reaches the utility. Without
+it, the same utility compiles to `var(--color-background)`, an indirection declared once at
+`:root`; the substitution then resolves in `:root`'s context and a redefinition made anywhere
+below it no longer reaches the utility.
+
+Today the dark class sits on the document element, which is `:root` itself, so both forms would
+happen to work. The difference bites the moment a theme is scoped to a subtree — a themed
+island, a preview pane — and it is the form the shadcn contract assumes. Switching themes is
+then plain cascade. */
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+
+    --radius-xs: calc(var(--radius) - 4px); /*  4px */
+    --radius-sm: calc(var(--radius) - 2px); /*  6px */
+    --radius-md: var(--radius); /*  8px */
+    --radius-lg: calc(var(--radius) + 2px); /* 10px */
+    --radius-xl: calc(var(--radius) + 4px); /* 12px */
+}
+
+/* Three semantic font tokens. The interface face is `--font-sans`, which Tailwind's preflight
+reads as the document default — that is what makes the reading face opt-in rather than merely
+discouraged, and the design document forbids setting dense chrome in the reading face. Delivery
+is the Fontsource provider configured in `vite.config.js`; nothing here names a remote host.
+
+No spacing tokens: the theme's eight steps are all multiples of four pixels and are therefore
+already exactly expressible on Tailwind's default scale, so naming them again would create a
+second vocabulary for values the first one already names. No elevation tokens either: the theme
+declares no shadows, and the design document's description of them is the definition of
+Tailwind's own `shadow-sm`. */
 @theme {
-    --font-sans:
-        'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-display: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: 'Lato', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-serif: 'Lora', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
 }

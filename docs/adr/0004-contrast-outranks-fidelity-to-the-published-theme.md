@@ -2,17 +2,25 @@
 
 The interface adopts the "Claude" shadcn theme published by tweakcn — terracotta on
 parchment, Poppins over Lato over Lora. Three of the pairings that theme declares fail
-WCAG 2.2 level AA: `muted-foreground` on `background` at 3.57:1, white on `primary` at
-3.86:1 in light and 3.14:1 in dark, and the input border at 2.03:1 where a component
+WCAG 2.2 level AA: `muted-foreground` on `background` at 3.65:1, white on `primary` at
+3.90:1 in light and 3.12:1 in dark, and the input border at 2.02:1 where a component
 boundary requires 3:1. Where a pairing fails, the token value moves until it passes, and
 the divergence from the published theme is recorded beside the value.
+
+Those figures are computed from tweakcn's published registry, which states the theme in
+OKLCH; the hexadecimal in the stylesheet is that registry converted. An earlier draft of
+this record quoted ratios from a hexadecimal source that the registry does not reproduce
+exactly — the terracotta differs by two parts in 255 — and the numbers above replace them,
+so that every value here can be recomputed from a source the repository can point at. The
+conclusion is unchanged: all three still fail.
 
 The primary button is the case that forces the choice rather than merely illustrating it.
 `primary-foreground` is already `#ffffff`, which is the maximum attainable against a
 mid-tone fill; no adjustment of the text rescues that pairing, and the only remaining lever
-is darkening the terracotta by roughly seventeen per cent of luminance. Fidelity to the
-published values and level AA cannot both hold, so one of them has to be the constraint and
-the other the aspiration.
+is darkening the terracotta — by eighteen per cent of luminance in light, and thirty-seven
+in dark, where the published fill is lighter and therefore further from the bar. Fidelity to
+the published values and level AA cannot both hold, so one of them has to be the constraint
+and the other the aspiration.
 
 The bar is enforced rather than intended. A test in the blocking suite reads
 `resources/css/app.css`, computes the ratio of every declared pairing in both themes, and
@@ -42,8 +50,23 @@ what arithmetic cannot see — roles, labels, heading order.
 
 ## Consequences
 
-The kit's terracotta is not `#cb6441`. Screenshots and token dumps will not match tweakcn's
+The kit's terracotta is not `#c96442`. Screenshots and token dumps will not match tweakcn's
 output, and a contributor comparing the two will find a difference that is deliberate.
+
+The three pairings above are the ones the decision was taken for, not the whole list. Run
+against the full token set, the test fails ten pairings and nine Token values move: in light
+`muted-foreground` (on the stage and again on `muted`), `primary`, `sidebar-primary`,
+`input` and `sidebar-ring`; in dark `primary`, `destructive`, `input`, and
+`accent-foreground`, which is derived rather than moved because it has no dark value of its
+own to move. The sidebar ones are treated identically even though nothing renders a sidebar
+yet: accommodating a failure because its surface is unused would make the rule advisory,
+which is the position this record refused.
+
+The pairings are declared in the test rather than derived, and one exclusion is a judgement
+rather than arithmetic: `--border` and `--sidebar-border` draw decorative edges and are not
+held at 3:1, because 1.4.11 reaches what identifies a component. Holding them would darken
+every surface edge in the kit to satisfy a rule the standard does not impose. `--input` is
+held, because it bounds a control.
 
 Only colour is held mechanically. Focus visibility, target size, motion preferences and
 semantic structure are not arithmetic and are not held by this test; the browser suite's
