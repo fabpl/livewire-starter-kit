@@ -110,7 +110,7 @@
         "mutate": [
             "Composer\\Config::disableProcessTimeout",
             "@php artisan config:clear --ansi",
-            "@php vendor/bin/pest --testsuite=Unit,Feature --mutate --everything --covered-only --parallel --min=72"
+            "@php vendor/bin/pest --testsuite=Unit,Feature --mutate --everything --covered-only --parallel --min=75"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
