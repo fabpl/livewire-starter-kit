@@ -29,7 +29,14 @@ observe. Toggle buttons reach the same reader with the browser's own tab order.
 
 The behaviour is Alpine, as the installation command's is, which arrives with Livewire and needs
 no dependency added. The pressed styling is the button Primitive's ghost variant keying off the
-same `aria-pressed`, so the affordance and the announcement cannot disagree. --}}
+same `aria-pressed`, so the affordance and the announcement cannot disagree.
+
+The gap is load-bearing rather than taste, and the segments were flush until hovering one drew
+its outline across its neighbour. The Primitive's two affordances reach outside their own box:
+the pressed ring extends two pixels past the border box, and the hover outline sits two pixels
+clear of it and is two pixels thick, so it reaches four. Six pixels is the point at which they
+stop meeting, and this is the next step up. Anything placing these buttons side by side owes them
+the same. --}}
 
 <div
     x-data="{
@@ -49,7 +56,7 @@ same `aria-pressed`, so the affordance and the announcement cannot disagree. --}
     }"
     role="group"
     aria-label="Colour theme"
-    class="flex items-center"
+    class="flex items-center gap-2"
 >
     <x-ui.button variant="ghost" x-on:click="select('light')" x-bind:aria-pressed="theme === 'light'">Light</x-ui.button>
 
