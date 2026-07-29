@@ -792,7 +792,13 @@ a second place, and the two would drift.
   visual regression, no accessibility auditing, no cross-browser or responsive matrix.
 - Branch or path coverage, and the heavier coverage driver it would require in the pipeline.
 - A domain glossary. There is no domain here, only tooling; a glossary would be corrupted by
-  its first entry.
+  its first entry. **Superseded, 2026-07-29.** `CONTEXT.md` exists at the repository root. The
+  condition this refusal was waiting on turned out to be satisfiable: the interface effort
+  found four terms naming categories the suite can tell apart, and the defaults effort added
+  four more naming how this foundation decides where a framework default is installed. Neither
+  set is general programming vocabulary, which is the test the domain-documentation convention
+  applies. The reasoning above stands for the glossary that was proposed at the time — a
+  glossary of the tooling — and it was never written.
 - Deployment, hosting and environment configuration.
 - Authentication and any user-interface component layer, both still deferred by the foundation
   effort.

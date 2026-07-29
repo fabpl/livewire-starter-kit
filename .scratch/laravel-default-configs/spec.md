@@ -1,6 +1,6 @@
 # Spec: Laravel default configs
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 ## Problem Statement
 
@@ -44,9 +44,9 @@ suite to observe the other branch; a default needing that guard descends into th
 bootstrap, where the guard disappears entirely. Where no level makes the guard provable, the
 default is installed anyway and the exception is written at the point of call.
 
-That placement rule is the durable output of this effort. It is recorded as ADR-0003, and the
+That placement rule is the durable output of this effort. It is recorded as ADR-0005, and the
 vocabulary it needs — *default*, *guard*, *provable guard*, *default taken on trust* — is
-recorded in the project glossary, which does not yet exist and is created here.
+recorded in the project glossary at `CONTEXT.md`.
 
 ## User Stories
 
@@ -327,7 +327,7 @@ package disables this one by default as well.
 
 ### The placement rule
 
-ADR-0003 records the rule that decided the placements above, in the terms the glossary
+ADR-0005 records the rule that decided the placements above, in the terms the glossary
 defines: a default is installed at the level where its guard is provable; a default whose
 guard would be unprovable descends to the level where the guard disappears; and where no level
 makes it provable, it is installed anyway with the exception written at the point of call.
@@ -345,8 +345,10 @@ is what allows a new case to be decided, and it is exactly what the short form d
 
 ### Project glossary
 
-The project has no glossary. This effort creates one, because it produced a load-bearing
-concept that has no written name and that decided four of its questions.
+This effort adds to the project glossary, because it produced a load-bearing concept that has
+no written name and that decided four of its questions. The glossary did not exist when this
+document was written; the interface effort created it at `CONTEXT.md` in the interval, so what
+was a creation becomes four entries appended to four that are already there.
 
 Four entries: **default**, a framework behaviour the foundation replaces at boot for
 everything built on it; **guard**, the environment condition under which a default applies;
