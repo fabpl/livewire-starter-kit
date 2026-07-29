@@ -46,19 +46,19 @@ match the new copy.
 
 **Blocked by:** None — can start immediately.
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] Livewire's configuration is published, with the view root set to the views directory itself
-- [ ] The `pages` entry is removed from the component namespaces, and the layouts entry is left in place
-- [ ] A layout exists that carries the document only — shell, head, font directive, bundle, slot — and no header, navigation or footer
-- [ ] A Page class exists in a `Pages` namespace under the application's Livewire root, with an empty body: no `render` method and no properties
-- [ ] The Page's view is found without a `render` method, by mirroring the class path
-- [ ] The root route is registered through Livewire's routing macro, passing the component class rather than a string name, and keeps its existing route name
-- [ ] The upstream welcome view is deleted, together with its inline stylesheet fallback
-- [ ] The example feature test is absorbed into a named test for the Page rather than left alongside it
-- [ ] A test fails if any Livewire component sits at the root of its namespace
-- [ ] The existing browser test is renamed to match the Page and its assertion updated; console hygiene and the absence of JavaScript errors are still asserted
-- [ ] The routing test still passes, with no closure-backed route introduced
-- [ ] `composer test` passes
-- [ ] `composer browser:test` passes
-- [ ] Committed as a single commit following the repository's Conventional Commits convention
+- [x] Livewire's configuration is published, with the view root set to the views directory itself
+- [x] The `pages` entry is removed from the component namespaces, and the layouts entry is left in place
+- [x] A layout exists that carries the document only — shell, head, font directive, bundle, slot — and no header, navigation or footer
+- [x] A Page class exists in a `Pages` namespace under the application's Livewire root, with an empty body: no `render` method and no properties
+- [x] The Page's view is found without a `render` method, by mirroring the class path
+- [x] The root route is registered through Livewire's routing macro, passing the component class rather than a string name, and keeps its existing route name
+- [x] The upstream welcome view is deleted, together with its inline stylesheet fallback
+- [x] The example feature test is absorbed into a named test for the Page rather than left alongside it
+- [x] A test fails if any Livewire component sits at the root of its namespace
+- [x] The existing browser test is renamed to match the Page and its assertion updated; console hygiene and the absence of JavaScript errors are still asserted
+- [x] The routing test still passes, with no closure-backed route introduced
+- [x] `composer test` passes
+- [x] `composer browser:test` passes
+- [x] Committed as a single commit following the repository's Conventional Commits convention
