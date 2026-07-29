@@ -46,7 +46,7 @@ system state follows the operating system rather than a value captured at load.
 
 - [x] A bar and a footer exist as Chrome, composed by the Page rather than placed in the layout
 - [x] The bar uses the page or card surface with foreground links, and carries no primary fill
-- [x] The footer carries the licence and a repository link
+- [x] The footer carries the licence and a repository link — and the theme control, see the first comment
 - [x] The theme control offers three states — light, dark, and system — with system a state of its own
 - [x] The choice persists in local storage and is honoured by the head script on the next load
 - [x] While the system state is active, a media-query listener keeps the page following the operating system as it changes
@@ -60,6 +60,24 @@ system state follows the operating system rather than a value captured at load.
 - [x] Committed as a single commit following the repository's Conventional Commits convention
 
 ## Comments
+
+**The theme control moved to the footer, on the maintainer's call.** `spec.md` put it in the bar
+— *"a quiet bar carrying the kit's name, the theme control and a repository link"* — and it was
+built there. Seen on the page, three segments carrying the widest labels in the composition were
+the loudest thing on a bar whose whole brief is to be quiet, and a preference a reader sets once
+does not need to be the second thing they meet. The bar keeps the kit's name and the repository
+link; `spec.md`'s composition section was corrected to match rather than left to disagree with the
+page. What it costs is a reader in dark mode scrolling to find the switch, which on a page this
+short is one gesture. Nothing about the control itself changed, and no test needed rewriting:
+they find it by its labels and by its accessible name, neither of which is a position.
+
+**Adjacent ghost buttons drew over each other, and the fix is a gap the composer owes them.** The
+segments were flush, and hovering one drew its outline across its neighbour's pressed ring. The
+Primitive's two affordances both reach outside their own box — the ring extends two pixels past
+the border box, the hover outline sits two pixels clear of it and is two pixels thick — so six
+pixels is where they stop meeting and eight is the next step up. This is a property of the
+Primitive that its consumers have to know, so it is written in the theme control beside the gap
+rather than left to be rediscovered.
 
 **The ghost variant carries the pressed state, which is a decision about where variance lives.**
 The obvious alternative was for the theme control to pass the active segment's colours in the

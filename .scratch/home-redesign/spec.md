@@ -310,12 +310,11 @@ reads the media query, sets a class, and is forbidden from growing beyond that.
 Four blocks, one composition per viewport, medium-low density, a readable measure for prose
 and a wider shell for chrome, near-white cards on the parchment stage.
 
-A quiet bar carrying the kit's name, the theme control and a repository link — chrome coloured
-as chrome, with no primary fill. A hero with one headline, one supporting line and one pair of
-calls to action. A section of three cards stating what the gate guarantees, drawn from this
+A quiet bar carrying the kit's name and a repository link — chrome coloured as chrome, with no
+primary fill. A hero with one headline, one supporting line and one pair of calls to action. A section of three cards stating what the gate guarantees, drawn from this
 repository's own configuration: the analysis level and the two rule sets beyond it, the
 coverage minimum and the mutation score, and formatting and refactoring with no suppression
-mechanism anywhere. A footer with the licence and the repository link.
+mechanism anywhere. A footer with the licence, the repository link and the theme control.
 
 The calls to action do something, which is a correctness requirement rather than a flourish:
 this repository has one route, so two buttons leading nowhere on the page that argues for
